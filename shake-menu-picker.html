@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🍹 흔들어서 메뉴 추천 (100종 에디션)</title>
+  <meta name="description" content="스마트폰을 흔들면 100가지 맛집 메뉴 중 오늘의 추천이 튀어나오는 웹앱">
+
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --accent: #f59e0b;
+      --accent-glow: #fbbf24;
+      --neon-pink: #ec4899;
+      --neon-cyan: #06b6d4;
+      --neon-green: #10b981;
+      --text: #f8fafc;
+      --text-dim: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 14px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 430px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      z-index: 1;
+    }
+
+    /* 헤더 */
+    .header {
+      text-align: center;
+      padding: 6px 0;
+    }
+    .header h1 {
+      font-size: 1.55rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #f59e0b, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+    .header p {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-top: 3px;
+    }
+
+    /* 카테고리 필터 태그 */
+    .category-pills {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      width: 100%;
+      padding: 4px 2px;
+      scrollbar-width: none;
+    }
+    .category-pills::-webkit-scrollbar { display: none; }
+
+    .pill {
+      background: #1e293b;
+      color: var(--text-dim);
+      border: 1px solid #334155;
+      padding: 6px 13px;
+      border-radius: 20px;
+      font-size: 0.76rem;
+      font-weight: bold;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .pill.active {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #000;
+      border-color: #f59e0b;
+      box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+    }
+
+    /* 메인 셰이커 상자 영역 */
+    .shake-stage {
+      width: 100%;
+      background: var(--card);
+      border-radius: 24px;
+      padding: 26px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.6);
+      position: relative;
+      min-height: 310px;
+    }
+
+    .shaker-box {
+      font-size: 5.2rem;
+      transition: transform 0.08s ease;
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+      cursor: pointer;
+      position: relative;
+    }
+
+    .shaker-box.shaking {
+      animation: violentShake 0.15s infinite alternate ease-in-out;
+    }
+
+    @keyframes violentShake {
+      0% { transform: translate(-8px, -5px) rotate(-12deg) scale(1.05); }
+      100% { transform: translate(8px, 5px) rotate(12deg) scale(1.1); }
+    }
+
+    .guide-text {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #fff;
+      margin-top: 16px;
+      text-align: center;
+    }
+    .sub-guide {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    /* 셰이크 에너지 게이지 */
+    .energy-wrap {
+      width: 85%;
+      height: 16px;
+      background: #0f172a;
+      border-radius: 10px;
+      margin-top: 18px;
+      overflow: hidden;
+      border: 1px solid #334155;
+      position: relative;
+    }
+    .energy-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #06b6d4, #f59e0b, #ec4899);
+      transition: width 0.1s linear;
+      box-shadow: 0 0 10px rgba(236, 72, 153, 0.6);
+    }
+    .energy-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 0.68rem;
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 0 1px 2px #000;
+    }
+
+    /* 결과 팝업 카드 */
+    .result-card {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.5) rotate(-10deg); opacity: 0; }
+      to { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    .result-emoji {
+      font-size: 4.8rem;
+      margin-bottom: 4px;
+      animation: bounce 0.6s infinite alternate;
+    }
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-10px); }
+    }
+
+    .result-name {
+      font-size: 1.85rem;
+      font-weight: 900;
+      color: var(--accent-glow);
+      text-shadow: 0 0 20px rgba(245, 158, 11, 0.6);
+    }
+    .result-tag {
+      background: #334155;
+      color: var(--neon-cyan);
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: bold;
+      margin-top: 6px;
+    }
+    .result-desc {
+      font-size: 0.9rem;
+      color: #e2e8f0;
+      margin-top: 10px;
+      line-height: 1.4;
+      max-width: 290px;
+    }
+
+    /* 버튼 영역 */
+    .btn-main {
+      width: 100%;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #000;
+      border: none;
+      padding: 15px;
+      border-radius: 14px;
+      font-size: 1.15rem;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.1s;
+    }
+    .btn-main:active { transform: scale(0.97); }
+
+    .btn-secondary {
+      background: #334155;
+      color: #fff;
+      box-shadow: none;
+      margin-top: 6px;
+      font-size: 0.92rem;
+      padding: 12px;
+    }
+
+    /* 최근 뽑은 메뉴 기록 */
+    .history-card {
+      width: 100%;
+      background: var(--card);
+      border-radius: 18px;
+      padding: 14px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .history-title {
+      font-size: 0.82rem;
+      font-weight: bold;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .history-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .history-tag {
+      background: #0f172a;
+      padding: 4px 9px;
+      border-radius: 8px;
+      font-size: 0.72rem;
+      color: var(--accent-glow);
+      border: 1px solid #334155;
+    }
+
+    .pc-sim-btn {
+      background: transparent;
+      border: 1px dashed #475569;
+      color: var(--text-dim);
+      padding: 8px;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="container">
+    <!-- 헤더 -->
+    <div class="header">
+      <h1>🍹 흔들어서 메뉴 추천</h1>
+      <p>100가지 맛집 메뉴 중 오늘의 운명은?</p>
+    </div>
+
+    <!-- 카테고리 필터 (6종) -->
+    <div class="category-pills">
+      <button class="pill active" onclick="setCategory('all', this)">✨ 전체 (100종)</button>
+      <button class="pill" onclick="setCategory('korean', this)">🍚 한식 (22)</button>
+      <button class="pill" onclick="setCategory('chinese', this)">🥟 중식 (16)</button>
+      <button class="pill" onclick="setCategory('japanese', this)">🍣 일식 (18)</button>
+      <button class="pill" onclick="setCategory('western', this)">🍔 양식·패스트 (18)</button>
+      <button class="pill" onclick="setCategory('snack', this)">🍢 분식 (14)</button>
+      <button class="pill" onclick="setCategory('asian', this)">🥗 아시안·헬시 (12)</button>
+    </div>
+
+    <!-- 메인 셰이커 인터랙션 영역 -->
+    <div class="shake-stage">
+      <div id="stage-shaking" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+        <div id="shaker-icon" class="shaker-box" onclick="simulateManualShake()">🎁</div>
+        <div id="guide-txt" class="guide-text">폰을 위아래로 마구 흔드세요!</div>
+        <div id="sub-guide-txt" class="sub-guide">흔들림 에너지 100%를 채우면 개봉됩니다</div>
+
+        <!-- 에너지 게이지 -->
+        <div class="energy-wrap">
+          <div id="energy-bar" class="energy-bar"></div>
+          <div id="energy-text" class="energy-text">0%</div>
+        </div>
+      </div>
+
+      <!-- 결과 팝업 화면 -->
+      <div id="stage-result" class="result-card">
+        <div id="res-emoji" class="result-emoji">🥘</div>
+        <div id="res-name" class="result-name">제육볶음</div>
+        <div id="res-tag" class="result-tag">#한식의_정석</div>
+        <div id="res-desc" class="result-desc">"직장인 점심의 불패 신화! 매콤달콤 고기반찬으로 밥 두 공기 뚝딱!"</div>
+      </div>
+    </div>
+
+    <!-- 액션 버튼 -->
+    <button id="btn-perm" class="btn-main" onclick="requestSensorPermission()">
+      🚀 흔들기 센서 시작 (권한 허용)
+    </button>
+    <button id="btn-retry" class="btn-main btn-secondary" onclick="resetShake()" style="display:none;">
+      🔄 다시 흔들어서 뽑기
+    </button>
+
+    <!-- PC 테스트용 흔들기 버튼 -->
+    <button class="pc-sim-btn" onclick="simulateManualShake()">
+      🖱️ PC 테스트: 클릭하여 강제로 흔들기 (+25%)
+    </button>
+
+    <!-- 최근 뽑은 메뉴 기록 -->
+    <div class="history-card">
+      <div class="history-title">
+        <span>🕒 최근 추천받은 메뉴</span>
+        <span style="cursor:pointer; font-size:0.75rem; color:var(--text-dim);" onclick="clearHistory()">초기화</span>
+      </div>
+      <div id="history-list" class="history-tags">
+        <span style="font-size:0.75rem; color:var(--text-dim);">아직 뽑은 기록이 없습니다.</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // ⭐️ 100가지 맛있는 메뉴 완벽 데이터베이스
+    // ==========================================
+    const FOOD_DATABASE = {
+      // 🍚 한식 (22종)
+      korean: [
+        { name: "제육볶음", emoji: "🥩", tag: "#직장인_소울푸드", desc: "고기반찬은 언제나 옳다! 매콤달콤 밥 두 공기 순삭!" },
+        { name: "돼지김치찌개", emoji: "🥘", tag: "#얼큰칼칼", desc: "진한 국물에 두부와 고기 듬뿍! 어제 마신 술까지 싹 풀리는 맛!" },
+        { name: "순대국밥", emoji: "🍲", tag: "#뜨끈든든", desc: "뚝배기 한 그릇의 든든함! 깍두기 국물 넣어서 완뚝 가자!" },
+        { name: "뼈해장국", emoji: "🍖", tag: "#고기발골", desc: "푹 고아낸 우거지와 야들야들한 등뼈 고기 뜯는 맛!" },
+        { name: "돌솥비빔밥", emoji: "🍳", tag: "#바삭누룽지", desc: "바삭하게 눌어붙은 누룽지와 고추장의 완벽한 조화!" },
+        { name: "삼겹살 쌈밥 정식", emoji: "🥓", tag: "#점심부터_고기", desc: "점심에 쌈 싸먹는 삼겹살은 오후 전투력 충전!" },
+        { name: "뚝배기 불고기", emoji: "🥩", tag: "#단짠단짠", desc: "달달하고 짭조름한 국물에 당면 듬뿍 호로록!" },
+        { name: "차돌 된장찌개", emoji: "🍲", tag: "#구수한맛", desc: "고소한 차돌박이 기름과 구수한 된장의 환상 조합!" },
+        { name: "얼큰 육개장", emoji: "🌶️", tag: "#얼큰시원", desc: "찢은 소고기와 대파가 듬뿍 들어간 칼칼한 보양식!" },
+        { name: "닭볶음탕", emoji: "🍗", tag: "#매콤달콤", desc: "포슬포슬 감자와 쫄깃한 닭고기 국물에 밥 비벼먹기!" },
+        { name: "보쌈정식", emoji: "🥬", tag: "#야들야들", desc: "촉촉한 수육과 보쌈김치의 완벽한 콜라보!" },
+        { name: "콩나물국밥", emoji: "🥚", tag: "#해장의정석", desc: "수란 톡 터뜨려 김가루 솔솔 뿌려먹는 맑고 시원한 국물!" },
+        { name: "부대찌개", emoji: "🥓", tag: "#라면사리필수", desc: "햄, 소시지, 치즈 가득 넣고 라면사리 투하!" },
+        { name: "소갈비탕", emoji: "🥩", tag: "#맑고진함", desc: "야들야들한 소갈비 뜯고 진한 육수 들이키기!" },
+        { name: "낙지/오징어 볶음", emoji: "🐙", tag: "#불맛매콤", desc: "스트레스 확 풀리는 화끈한 불맛 덮밥!" },
+        { name: "바지락 칼국수", emoji: "🍜", tag: "#면치기", desc: "시원한 바지락 육수에 매콤한 겉절이 한 점 척!" },
+        { name: "손수제비", emoji: "🥣", tag: "#쫄깃쫄깃", desc: "손으로 숭덩숭덩 뜯어 넣은 쫄깃한 피와 구수한 국물!" },
+        { name: "설렁탕/곰탕", emoji: "🍲", tag: "#뽀얀국물", desc: "소면 사리 말아서 깍두기 얹어 먹는 든든함!" },
+        { name: "고등어구이 백반", emoji: "🐟", tag: "#겉바속촉", desc: "노릇노릇 구운 고등어 살을 갓 지은 쌀밥 위에 얹어 한 입!" },
+        { name: "소머리국밥", emoji: "🐮", tag: "#콜라겐가득", desc: "쫀득한 머릿고기와 뽀얗고 진한 국물의 하모니!" },
+        { name: "우렁 쌈밥정식", emoji: "🥬", tag: "#건강한포만감", desc: "신선한 쌈채소에 쫄깃한 우렁쌈장 듬뿍 얹어 한 쌈!" },
+        { name: "벌교 꼬막비빔밥", emoji: "🦪", tag: "#바다향가득", desc: "탱글탱글한 꼬막과 매콤 고소한 양념장의 축제!" }
+      ],
+
+      // 🥟 중식 (16종)
+      chinese: [
+        { name: "간짜장 & 군만두", emoji: "🍜", tag: "#불맛짜장", desc: "아삭한 양파와 갓 볶은 춘장의 불맛! 군만두 필수!" },
+        { name: "얼큰 해물짬뽕", emoji: "🦐", tag: "#얼큰칼칼", desc: "오징어, 홍합, 꽃게가 듬뿍 들어간 불맛 짬뽕!" },
+        { name: "마라탕", emoji: "🌶️", tag: "#혈중마라농도", desc: "원하는 재료 듬뿍 넣고 2단계 매운맛으로 땀 쏙 빼기!" },
+        { name: "마라샹궈", emoji: "🥘", tag: "#밥도둑끝판왕", desc: "얼얼하고 매콤하게 볶아낸 중독성 200% 요리!" },
+        { name: "찹쌀 탕수육 (꿔바로우)", emoji: "🥢", tag: "#겉바속쫀", desc: "바삭하고 쫀득한 튀김옷에 새콤달콤 소스 듬뿍!" },
+        { name: "삼선 볶음밥", emoji: "🍚", tag: "#짜장_짬뽕국물", desc: "고슬고슬 계란 볶음밥에 짜장 소스 쓱쓱 비벼먹기!" },
+        { name: "칠리/크림 새우", emoji: "🍤", tag: "#통통한새우", desc: "바삭한 튀김 속 탱글탱글한 대왕 새우의 식감!" },
+        { name: "중화 비빔밥", emoji: "🍳", tag: "#대구의명물", desc: "불맛 나는 해물 야채 볶음을 밥 위에 얹은 마성의 맛!" },
+        { name: "바삭 멘보샤", emoji: "🍞", tag: "#바삭촉촉", desc: "식빵 사이에 통새우 살을 가득 채워 튀겨낸 별미!" },
+        { name: "마파두부 덮밥", emoji: "🍛", tag: "#부드러운매운맛", desc: "야들야들한 두부와 매콤 알싸한 소스의 조화!" },
+        { name: "딤섬 & 소룡포", emoji: "🥟", tag: "#육즙팡팡", desc: "만두피를 찢으면 흘러나오는 뜨끈하고 진한 육즙!" },
+        { name: "유린기", emoji: "🍗", tag: "#새콤바삭", desc: "바삭한 닭튀김 위에 청양고추와 새콤한 간장 소스!" },
+        { name: "잡채밥", emoji: "🥢", tag: "#당면러버", desc: "탱글한 당면과 아삭한 야채를 불맛 나게 볶아낸 덮밥!" },
+        { name: "대만식 우육면", emoji: "🍜", tag: "#진한국물", desc: "푹 끓여낸 소고기 편육과 진하고 이국적인 육수!" },
+        { name: "탄탄면", emoji: "🥜", tag: "#고소매콤", desc: "고소한 땅콩 소스와 매콤한 고추기름의 절묘한 맛!" },
+        { name: "동파육 덮밥", emoji: "🥩", tag: "#살살녹음", desc: "간장 소스에 부드럽게 조려낸 두툼한 돼지고기!" }
+      ],
+
+      // 🍣 일식 (18종)
+      japanese: [
+        { name: "치즈 돈까스", emoji: "🍱", tag: "#치즈폭포", desc: "바삭한 튀김옷 속에서 쭈욱 늘어나는 모짜렐라 치즈!" },
+        { name: "등심/안심 카츠", emoji: "🥩", tag: "#겉바속촉", desc: "두툼하고 육즙 가득한 프리미엄 수제 돈카츠!" },
+        { name: "모듬 초밥", emoji: "🍣", tag: "#신선함가득", desc: "연어, 광어, 참치, 새우! 깔끔하고 고급스러운 한 끼!" },
+        { name: "돈코츠 라멘", emoji: "🍜", tag: "#진한사골", desc: "차슈와 반숙 계란이 올라간 깊고 진한 일본식 라멘!" },
+        { name: "매운 카라미소 라멘", emoji: "🌶️", tag: "#칼칼라멘", desc: "된장 베이스에 매콤함을 더한 얼큰한 국물!" },
+        { name: "가츠동 (돈까스덮밥)", emoji: "🍲", tag: "#단짠단짠", desc: "부드러운 계란과 달콤 짭조름한 쯔유 소스의 마법!" },
+        { name: "규동 (소고기덮밥)", emoji: "🥩", tag: "#초스피드", desc: "얇게 썬 소고기와 양파를 감칠맛 나게 졸여낸 덮밥!" },
+        { name: "사케동 (생연어덮밥)", emoji: "🐟", tag: "#부드러운연어", desc: "신선하고 기름진 생연어와 생와사비의 조화!" },
+        { name: "바삭 모듬 텐동", emoji: "🍤", tag: "#튀김덮밥", desc: "새우, 온천계란, 김, 꽈리고추 튀김을 수북이 쌓은 덮밥!" },
+        { name: "철판 야키소바", emoji: "🥢", tag: "#단짠볶음면", desc: "달콤 짭조름한 소스에 가쓰오부시가 춤추는 볶음면!" },
+        { name: "활어 회덮밥", emoji: "🥗", tag: "#새콤매콤", desc: "신선한 회와 채소에 초고추장 쓱쓱 비벼먹기!" },
+        { name: "일본식 숙성 카레", emoji: "🍛", tag: "#깊고진함", desc: "양파를 카라멜라이징해 깊은 풍미를 낸 진한 카레!" },
+        { name: "냉모밀 / 자루소바", emoji: "🧊", tag: "#살얼음동동", desc: "시원한 쯔유 육수에 와사비 풀어 면을 적셔먹기!" },
+        { name: "마제소바 (비빔라멘)", emoji: "🍜", tag: "#노른자톡", desc: "다진 고기와 노른자를 비벼먹고 남은 양념에 밥 비비기!" },
+        { name: "장어덮밥 (우나기동)", emoji: "🍱", tag: "#원기회복", desc: "달콤한 특제 양념을 발라 구워낸 프리미엄 보양식!" },
+        { name: "모츠나베 (대창전골)", emoji: "🍲", tag: "#고소한국물", desc: "고소한 대창과 부추가 듬뿍 들어간 따뜻한 전골!" },
+        { name: "가츠카레", emoji: "🍛", tag: "#돈까스_카레", desc: "바삭한 돈까스와 진한 일본 카레를 동시에 즐기기!" },
+        { name: "오코노미야키", emoji: "🥞", tag: "#단짠철판", desc: "양배추와 해물 가득 넣고 소스와 마요네즈 듬뿍!" }
+      ],
+
+      // 🍔 양식 & 패스트푸드 (18종)
+      western: [
+        { name: "수제 베이컨 치즈버거", emoji: "🍔", tag: "#육즙폭발", desc: "두툼한 소고기 패티와 갓 튀긴 감자튀김의 미국 맛!" },
+        { name: "매콤 까르보나라", emoji: "🍝", tag: "#꾸덕꾸덕", desc: "베이컨의 고소함에 매콤함을 더한 크림 파스타!" },
+        { name: "페퍼로니 화덕피자", emoji: "🍕", tag: "#치즈파티", desc: "도우 끝까지 바삭하고 짭조름한 페퍼로니의 중독성!" },
+        { name: "싸이버거 스타일 치킨버거", emoji: "🍗", tag: "#통다리살", desc: "육즙 가득 바삭한 통다리살 치킨 패티의 위엄!" },
+        { name: "봉골레 파스타", emoji: "🦪", tag: "#오일파스타", desc: "신선한 조개와 마늘, 올리브유의 깔끔 담백한 풍미!" },
+        { name: "토마토 미트볼 파스타", emoji: "🍝", tag: "#정통클래식", desc: "진한 토마토 소스에 두툼한 수제 미트볼 듬뿍!" },
+        { name: "목살 스테이크 샐러드", emoji: "🥩", tag: "#푸짐한한상", desc: "달콤 짭조름한 소스에 구운 목살과 신선한 샐러드!" },
+        { name: "고르곤졸라 피자", emoji: "🧀", tag: "#꿀찍먹", desc: "꼬릿한 치즈 향에 달콤한 꿀을 푹 찍어 먹는 단짠 피자!" },
+        { name: "바질 크림 리조또", emoji: "🍚", tag: "#향긋한풍미", desc: "향긋한 바질 페스토와 꾸덕한 크림 쌀알의 조화!" },
+        { name: "쉬림프 로제 파스타", emoji: "🦐", tag: "#로제대세", desc: "부드러운 크림과 상큼한 토마토 소스에 통새우!" },
+        { name: "멕시칸 타코 & 퀘사디아", emoji: "🌮", tag: "#살사소스", desc: "또띠아에 고기, 살사, 치즈 가득 채운 멕시칸 맛!" },
+        { name: "바베큐 폭립", emoji: "🍖", tag: "#뼈째뜯기", desc: "달콤 훈제 바베큐 소스를 듬뿍 바른 부드러운 등갈비!" },
+        { name: "피쉬 앤 칩스", emoji: "🐟", tag: "#바삭타르타르", desc: "겉바속촉 흰살생선 튀김과 두툼한 감자튀김!" },
+        { name: "에그 베네딕트 브런치", emoji: "🍳", tag: "#수란톡", desc: "잉글리시 머핀 위에 훈제연어와 홀랜다이즈 소스!" },
+        { name: "잠봉뵈르 샌드위치", emoji: "🥖", tag: "#바게트버터", desc: "바삭한 바게트 속에 듬뿍 넣은 잠봉 햄과 고급 버터!" },
+        { name: "뉴욕 칠리치즈 핫도그", emoji: "🌭", tag: "#통통소시지", desc: "통통한 소시지 위에 매콤 칠리 미트소스와 치즈!" },
+        { name: "오븐 토마토 라자냐", emoji: "🥘", tag: "#겹겹이치즈", desc: "라구 소스와 치즈를 층층이 쌓아 구워낸 이탈리아 별미!" },
+        { name: "크리스피 후라이드 치킨", emoji: "🍗", tag: "#겉바속촉", desc: "바삭바삭 소리까지 맛있는 황금빛 닭튀김!" }
+      ],
+
+      // 🍢 분식 & 길거리 음식 (14종)
+      snack: [
+        { name: "로제 떡볶이 & 모듬튀김", emoji: "🍢", tag: "#분식대장", desc: "매콤 크리미한 로제 소스에 김말이와 튀김 푹 찍먹!" },
+        { name: "즉석 떡볶이 & 볶음밥", emoji: "🥘", tag: "#보글보글", desc: "라면, 쫄면, 야끼만두 넣고 마지막에 치즈볶음밥!" },
+        { name: "참치마요 김밥 & 라면", emoji: "🍙", tag: "#국민조합", desc: "고소한 참치마요 김밥에 얼큰한 신라면 국물 찍먹!" },
+        { name: "모듬 순대 & 내장", emoji: "🐷", tag: "#소금쌈장", desc: "찰순대와 허파, 간을 소금이나 쌈장에 콕 찍어먹기!" },
+        { name: "바삭 오징어/야채 튀김", emoji: "🍤", tag: "#황금튀김", desc: "바삭바삭한 튀김옷과 떡볶이 국물의 환상 케미!" },
+        { name: "새콤매콤 쫄면 & 군만두", emoji: "🍜", tag: "#쫄깃새콤", desc: "아삭한 콩나물과 쫄깃한 면발에 바삭한 만두 싸먹기!" },
+        { name: "부산식 물떡 & 어묵꼬치", emoji: "🍢", tag: "#따끈한국물", desc: "진한 멸치 육수 머금은 쫄깃한 가래떡과 어묵!" },
+        { name: "얼큰 돈까스 김치나베", emoji: "🍲", tag: "#얼큰돈까스", desc: "칼칼한 김치 국물에 촉촉하게 적셔진 돈까스!" },
+        { name: "치즈 라볶이", emoji: "🍜", tag: "#라면서비스", desc: "매콤달콤 떡볶이 양념이 쏙 배어든 라면 면발!" },
+        { name: "충무김밥 & 오징어무침", emoji: "🍙", tag: "#매콤새콤", desc: "담백한 김밥에 매콤한 오징어어묵무침과 깍두기!" },
+        { name: "경양식 왕돈까스", emoji: "🍽️", tag: "#손바닥두배", desc: "거대한 돈까스에 달콤 데미그라스 소스 듬뿍!" },
+        { name: "스팸 김치볶음밥", emoji: "🍳", tag: "#반숙후라이", desc: "버터에 볶은 신김치와 스팸, 노른자 톡 터뜨려 비비기!" },
+        { name: "회오리 오므라이스", emoji: "🍛", tag: "#부드러운계란", desc: "부드러운 계란 이불을 덮은 케첩 야채 볶음밥!" },
+        { name: "진한 멸치 잔치국수", emoji: "🍜", tag: "#멸치육수", desc: "담백한 멸치 육수에 유부와 호박, 김가루 얹은 면 요리!" }
+      ],
+
+      // 🥗 아시안 & 헬시 다이어트 (12종)
+      asian: [
+        { name: "베트남 양지 쌀국수", emoji: "🍜", tag: "#국물이끝내줘요", desc: "진한 소고기 육수에 숙주와 양파 절임 듬뿍!" },
+        { name: "숯불 돼지고기 분짜", emoji: "🥗", tag: "#느억맘소스", desc: "새콤달콤 느억맘 소스에 숯불 고기와 쌀국수 퐁당!" },
+        { name: "태국식 새우 팟타이", emoji: "🍤", tag: "#땅콩솔솔", desc: "달콤 짭조름한 소스에 새우와 계란, 땅콩가루를 볶은 면!" },
+        { name: "푸팟퐁커리", emoji: "🦀", tag: "#소프트크랩", desc: "부드러운 계란과 코코넛 밀크가 어우러진 옐로우 커리!" },
+        { name: "나시고랭 (인도네시아 볶음밥)", emoji: "🍛", tag: "#마성의볶음밥", desc: "달콤 짭짤한 삼발 소스로 볶아낸 세계 1위 볶음밥!" },
+        { name: "분보남보 (베트남 비빔국수)", emoji: "🥗", tag: "#새콤달콤", desc: "신선한 야채와 불고기, 땅콩을 비벼먹는 산뜻한 국수!" },
+        { name: "하와이안 생연어 포케", emoji: "🥑", tag: "#헬시포케", desc: "현미밥 위에 신선한 생연어, 아보카도, 채소 듬뿍!" },
+        { name: "닭가슴살 아보카도 샐러드", emoji: "🥗", tag: "#클린식단", desc: "단백질 충전 완료! 발사믹 드레싱으로 맛있게 관리!" },
+        { name: "서브웨이 로티세리 치킨", emoji: "🥪", tag: "#다이어터성지", desc: "위트 빵에 야채 전부 넣고 올리브오일 소스!" },
+        { name: "꾸덕 그릭요거트 볼", emoji: "🥣", tag: "#과일그래놀라", desc: "꾸덕한 그릭 요거트에 그래놀라, 꿀, 제철 과일 듬뿍!" },
+        { name: "멕시칸 치킨 부리또볼", emoji: "🥗", tag: "#부리또볼", desc: "현미밥, 치킨, 블랙빈, 옥수수, 살사를 비벼먹는 헬시볼!" },
+        { name: "닭안심 월남쌈", emoji: "🌯", tag: "#라이스페이퍼", desc: "갖가지 색색 야채와 닭안심을 땅콩소스에 콕 찍먹!" }
+      ]
+    };
+
+    // ==========================================
+    // 사운드 신디사이저 (Web Audio API)
+    // ==========================================
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) audioCtx = new AudioCtx();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playShakeSound() {
+      try {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(400 + Math.random() * 300, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.08);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.08);
+      } catch (e) {}
+    }
+
+    function playFanfare() {
+      try {
+        if (!audioCtx) return;
+        [523.25, 659.25, 783.99, 1046.50, 1318.51].forEach((freq, i) => {
+          setTimeout(() => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.3);
+          }, i * 110);
+        });
+      } catch (e) {}
+    }
+
+    // ==========================================
+    // 흔들기 감지 & 물리 에너지 로직
+    // ==========================================
+    let currentCategory = 'all';
+    let shakeEnergy = 0;
+    let isRevealed = false;
+    let lastX = 0, lastY = 0, lastZ = 0;
+    let lastShakeTime = 0;
+    let decayTimer = null;
+
+    function setCategory(cat, btn) {
+      currentCategory = cat;
+      document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    async function requestSensorPermission() {
+      initAudio();
+
+      if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+        try {
+          const permission = await DeviceMotionEvent.requestPermission();
+          if (permission !== 'granted') {
+            alert('흔들기 감지를 위해 모션 센서 권한이 필요합니다.');
+            return;
+          }
+        } catch (e) {
+          console.warn('iOS Motion Sensor Error:', e);
+        }
+      }
+
+      window.addEventListener('devicemotion', handleMotion, true);
+      document.getElementById('btn-perm').style.display = 'none';
+      startEnergyDecay();
+    }
+
+    function handleMotion(e) {
+      if (isRevealed) return;
+
+      const acc = e.accelerationIncludingGravity || e.acceleration;
+      if (!acc || acc.x === null) return;
+
+      const now = Date.now();
+      const deltaX = Math.abs(acc.x - lastX);
+      const deltaY = Math.abs(acc.y - lastY);
+      const deltaZ = Math.abs(acc.z - lastZ);
+      const speed = deltaX + deltaY + deltaZ;
+
+      if (speed > 18 && (now - lastShakeTime > 90)) {
+        lastShakeTime = now;
+        addShakeEnergy(speed * 0.45);
+      }
+
+      lastX = acc.x;
+      lastY = acc.y;
+      lastZ = acc.z;
+    }
+
+    function simulateManualShake() {
+      initAudio();
+      if (isRevealed) return;
+      addShakeEnergy(25);
+    }
+
+    function addShakeEnergy(amount) {
+      if (isRevealed) return;
+
+      shakeEnergy = Math.min(shakeEnergy + amount, 100);
+      updateEnergyUI();
+
+      const box = document.getElementById('shaker-icon');
+      box.classList.add('shaking');
+      setTimeout(() => box.classList.remove('shaking'), 150);
+
+      playShakeSound();
+      if (navigator.vibrate) navigator.vibrate(35);
+
+      if (shakeEnergy >= 100) {
+        revealMenu();
+      }
+    }
+
+    function startEnergyDecay() {
+      if (decayTimer) clearInterval(decayTimer);
+      decayTimer = setInterval(() => {
+        if (!isRevealed && shakeEnergy > 0) {
+          shakeEnergy = Math.max(shakeEnergy - 3, 0);
+          updateEnergyUI();
+        }
+      }, 180);
+    }
+
+    function updateEnergyUI() {
+      const percent = Math.round(shakeEnergy);
+      document.getElementById('energy-bar').style.width = percent + "%";
+      document.getElementById('energy-text').innerText = percent + "%";
+
+      if (percent > 70) {
+        document.getElementById('shaker-icon').innerText = "🔥";
+        document.getElementById('guide-txt').innerText = "거의 다 됐습니다! 더 격렬하게!!";
+      } else if (percent > 30) {
+        document.getElementById('shaker-icon').innerText = "🍹";
+        document.getElementById('guide-txt').innerText = "좋습니다! 멈추지 마세요!";
+      } else {
+        document.getElementById('shaker-icon').innerText = "🎁";
+        document.getElementById('guide-txt').innerText = "폰을 위아래로 마구 흔드세요!";
+      }
+    }
+
+    // ==========================================
+    // 100가지 풀에서 메뉴 추첨 & 오픈
+    // ==========================================
+    function revealMenu() {
+      isRevealed = true;
+      if (decayTimer) clearInterval(decayTimer);
+
+      let pool = [];
+      if (currentCategory === 'all') {
+        Object.keys(FOOD_DATABASE).forEach(k => pool.push(...FOOD_DATABASE[k]));
+      } else {
+        pool = FOOD_DATABASE[currentCategory] || FOOD_DATABASE['korean'];
+      }
+
+      const pick = pool[Math.floor(Math.random() * pool.length)];
+
+      document.getElementById('stage-shaking').style.display = 'none';
+      const resStage = document.getElementById('stage-result');
+      resStage.style.display = 'flex';
+
+      document.getElementById('res-emoji').innerText = pick.emoji;
+      document.getElementById('res-name').innerText = pick.name;
+      document.getElementById('res-tag').innerText = pick.tag;
+      document.getElementById('res-desc').innerText = `"${pick.desc}"`;
+
+      document.getElementById('btn-retry').style.display = 'flex';
+
+      playFanfare();
+      if (navigator.vibrate) navigator.vibrate([100, 50, 200]);
+      launchConfetti();
+
+      saveHistory(pick.name, pick.emoji);
+    }
+
+    function resetShake() {
+      isRevealed = false;
+      shakeEnergy = 0;
+      updateEnergyUI();
+
+      document.getElementById('stage-result').style.display = 'none';
+      document.getElementById('stage-shaking').style.display = 'flex';
+      document.getElementById('btn-retry').style.display = 'none';
+
+      startEnergyDecay();
+    }
+
+    // ==========================================
+    // 히스토리 관리
+    // ==========================================
+    function saveHistory(name, emoji) {
+      let history = JSON.parse(localStorage.getItem('shake_menu_history') || '[]');
+      history.unshift({ name: name, emoji: emoji, time: new Date().toLocaleTimeString().slice(0, 5) });
+      if (history.length > 7) history.pop();
+      localStorage.setItem('shake_menu_history', JSON.stringify(history));
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const history = JSON.parse(localStorage.getItem('shake_menu_history') || '[]');
+      const container = document.getElementById('history-list');
+      if (history.length === 0) {
+        container.innerHTML = `<span style="font-size:0.75rem; color:var(--text-dim);">아직 뽑은 기록이 없습니다.</span>`;
+        return;
+      }
+
+      container.innerHTML = history.map(item => `
+        <div class="history-tag">${item.emoji} ${escapeHtml(item.name)} (${item.time})</div>
+      `).join('');
+    }
+
+    function clearHistory() {
+      localStorage.removeItem('shake_menu_history');
+      renderHistory();
+    }
+
+    function escapeHtml(str) {
+      return (str || '').replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+    }
+
+    // ==========================================
+    // 컨페티(폭죽) 애니메이션 (Canvas)
+    // ==========================================
+    function launchConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const pieces = [];
+      const colors = ['#f59e0b', '#ec4899', '#06b6d4', '#10b981', '#fbbf24'];
+      for (let i = 0; i < 70; i++) {
+        pieces.push({
+          x: canvas.width / 2,
+          y: canvas.height * 0.45,
+          vx: (Math.random() - 0.5) * 14,
+          vy: (Math.random() - 0.8) * 16,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          vRot: (Math.random() - 0.5) * 10
+        });
+      }
+
+      let frames = 0;
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        pieces.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.4;
+          p.rotation += p.vRot;
+
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rotation * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+          ctx.restore();
+        });
+
+        frames++;
+        if (frames < 90) requestAnimationFrame(animate);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      animate();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderHistory();
+    });
+  </script>
+</body>
+</html>
