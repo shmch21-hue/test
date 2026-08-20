@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>침대 던지기 파워 랭킹전</title>
-  <meta name="description" content="휴대폰을 침대에 던저서 파워 채크하기">
+  <meta name="description" content="휴대폰을 침대에 던져서 파워 체크하기">
   
   <style>
     * {
@@ -16,7 +16,7 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
-      background-color: #f4f6fb;
+      background-color: #0b0f19;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     }
     .iframe-wrapper {
@@ -33,6 +33,36 @@
       border: none;
       display: block;
     }
+
+    /* 상단 모바일 전체화면 직접 열기 버튼 (아이폰 등 iframe 센서 차단 대응) */
+    .direct-bar {
+      position: fixed;
+      top: 12px;
+      right: 12px;
+      z-index: 50;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      border: 1px solid #facc15;
+      color: #facc15;
+      padding: 7px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      transition: transform 0.2s, background 0.2s;
+    }
+    .direct-bar:hover {
+      background: #facc15;
+      color: #000;
+    }
+    .direct-bar:active {
+      transform: scale(0.95);
+    }
+
     /* Loading Spinner */
     .loading-overlay {
       position: absolute;
@@ -40,7 +70,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: #f4f6fb;
+      background: #0b0f19;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -56,15 +86,15 @@
     .spinner {
       width: 44px;
       height: 44px;
-      border: 4px solid #e2e8f0;
-      border-top: 4px solid #4f46e5;
+      border: 4px solid #1e293b;
+      border-top: 4px solid #facc15;
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
       margin-bottom: 1rem;
     }
     .loading-text {
-      color: #475569;
-      font-size: 0.95rem;
+      color: #94a3b8;
+      font-size: 0.92rem;
       font-weight: 600;
     }
     @keyframes spin {
@@ -75,15 +105,39 @@
 </head>
 <body>
 
+  <!-- 아이폰/사파리 등 iframe 센서 차단 시 원클릭 새창 이동 버튼 -->
+  <a href="https://script.google.com/macros/s/AKfycbzNWJk4m3MKRXFYzsvZ8zE2nYf_N0YIzmrqzmlbyC9heFN2xm8s4MmX3VId8GNpz7ry/exec" 
+     target="_blank" 
+     class="direct-bar">
+    <span>📱 새창/전체화면으로 열기</span>
+  </a>
+
+  <!-- 로딩 오버레이 -->
+  <div id="loading" class="loading-overlay">
+    <div class="spinner"></div>
+    <div class="loading-text">게임 서버에 접속하는 중...</div>
+  </div>
+
   <!-- 전체 화면 Google Apps Script Web App iframe -->
   <div class="iframe-wrapper">
     <iframe 
       id="gas-frame"
       src="https://script.google.com/macros/s/AKfycbzNWJk4m3MKRXFYzsvZ8zE2nYf_N0YIzmrqzmlbyC9heFN2xm8s4MmX3VId8GNpz7ry/exec"
-      allow="clipboard-write; clipboard-read"
-      onload="document.getElementById('loading').classList.add('hidden')">
+      allow="accelerometer; gyroscope; magnetometer; autoplay; clipboard-write; clipboard-read"
+      allowfullscreen
+      onload="hideLoading()">
     </iframe>
   </div>
+
+  <script>
+    function hideLoading() {
+      var loader = document.getElementById('loading');
+      if (loader) loader.classList.add('hidden');
+    }
+
+    // iframe onload가 지연되더라도 3.5초 후 로딩창 자동 해제
+    setTimeout(hideLoading, 3500);
+  </script>
 
 </body>
 </html>
