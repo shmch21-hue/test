@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🤫 순수 무설치 소음 경찰 (Noise Police)</title>
+  <meta name="description" content="서버/시트 없이 단일 HTML로 작동하는 실시간 데시벨 감시 및 극대노 호통기">
+  
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card: #161f30;
+      --card-inner: #0f172a;
+      --neon-yellow: #facc15;
+      --neon-red: #ef4444;
+      --neon-blue: #38bdf8;
+      --neon-green: #22c55e;
+      --text: #f8fafc;
+      --text-dim: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 14px;
+      overflow-x: hidden;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .header {
+      text-align: center;
+      padding: 8px 0;
+    }
+    .header h1 {
+      font-size: 1.55rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #ef4444, #facc15);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+    .header p {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      margin-top: 3px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 18px;
+      padding: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    /* 데시벨 디스플레이 */
+    .meter-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 10px;
+      text-align: center;
+      position: relative;
+    }
+
+    .status-badge {
+      font-size: 0.75rem;
+      font-weight: bold;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: #1e293b;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .status-badge.active {
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--neon-green);
+      border: 1px solid var(--neon-green);
+    }
+    .status-badge.warning {
+      background: rgba(239, 68, 68, 0.2);
+      color: var(--neon-red);
+      border: 1px solid var(--neon-red);
+      animation: pulse 0.5s infinite alternate;
+    }
+
+    .db-number {
+      font-size: 4.8rem;
+      font-weight: 900;
+      color: var(--neon-green);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+      transition: color 0.15s ease;
+    }
+    .db-unit {
+      font-size: 1.1rem;
+      color: var(--text-dim);
+      font-weight: bold;
+      margin-top: 4px;
+    }
+
+    .gauge-wrapper {
+      width: 100%;
+      height: 12px;
+      background: #0f172a;
+      border-radius: 6px;
+      margin-top: 16px;
+      overflow: hidden;
+      position: relative;
+    }
+    .gauge-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #22c55e, #facc15, #ef4444);
+      transition: width 0.08s linear;
+    }
+    .gauge-threshold-line {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 2px;
+      background: #fff;
+      box-shadow: 0 0 8px #fff;
+    }
+
+    .btn-main {
+      width: 100%;
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: #fff;
+      border: none;
+      padding: 16px;
+      border-radius: 14px;
+      font-size: 1.15rem;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+      transition: transform 0.1s, filter 0.2s;
+      margin-top: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-main.running {
+      background: linear-gradient(135deg, #64748b, #475569);
+      box-shadow: none;
+    }
+    .btn-main:active { transform: scale(0.97); }
+
+    /* 설정 */
+    .setting-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      font-size: 0.85rem;
+    }
+    .setting-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .setting-label {
+      font-weight: bold;
+      color: var(--text);
+    }
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 60%;
+    }
+    .slider {
+      flex: 1;
+      accent-color: var(--neon-red);
+    }
+    .threshold-val {
+      font-weight: 900;
+      color: var(--neon-yellow);
+      width: 45px;
+      text-align: right;
+    }
+
+    .select-field {
+      background: var(--card-inner);
+      border: 1px solid #334155;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      outline: none;
+    }
+
+    /* 로그 피드 */
+    .log-card { margin-top: 2px; }
+    .log-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: var(--neon-yellow);
+      margin-bottom: 10px;
+    }
+    .btn-clear {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      font-size: 0.75rem;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .log-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+    .log-item {
+      background: var(--card-inner);
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-left: 3px solid var(--neon-red);
+    }
+    .log-db { font-weight: 900; color: var(--neon-red); }
+    .log-msg { color: #fca5a5; margin-top: 2px; font-size: 0.75rem; }
+
+    @keyframes pulse {
+      from { opacity: 0.7; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1.02); }
+    }
+    .pulse-warning {
+      animation: screenPulse 0.4s infinite alternate;
+    }
+    @keyframes screenPulse {
+      from { background-color: #0b0f19; }
+      to { background-color: #3b0712; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1>🤫 소음 경찰 (단독 실행 버전)</h1>
+      <p>서버/시트 없이 마이크로 즉시 동작하는 극대노 소음 감시관</p>
+    </div>
+
+    <!-- 실시간 데시벨 메인 보드 -->
+    <div class="card meter-box">
+      <div id="status-badge" class="status-badge">
+        <span>●</span> <span id="status-text">감시 대기 중</span>
+      </div>
+
+      <div id="db-display" class="db-number">0.0</div>
+      <div class="db-unit">dB (데시벨)</div>
+
+      <div class="gauge-wrapper">
+        <div id="gauge-bar" class="gauge-bar"></div>
+        <div id="threshold-line" class="gauge-threshold-line" style="left: 75%;"></div>
+      </div>
+
+      <button id="btn-toggle" class="btn-main" onclick="togglePolice()">
+        🚨 소음 감시 시작 (마이크 ON)
+      </button>
+    </div>
+
+    <!-- 감시 설정 카드 -->
+    <div class="card">
+      <div class="setting-group">
+        <div class="setting-row">
+          <span class="setting-label">🎯 단속 기준 데시벨</span>
+          <div class="slider-container">
+            <input type="range" id="threshold-slider" class="slider" min="50" max="95" value="75" oninput="updateThreshold(this.value)">
+            <span id="threshold-text" class="threshold-val">75 dB</span>
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <span class="setting-label">🤬 분노 모드 (경고 수위)</span>
+          <select id="rage-mode" class="select-field">
+            <option value="mara">🌶️ 마라맛 (극대노/쌍욕 모드)</option>
+            <option value="spicy">🔥 매운맛 (상사/엄근진 모드)</option>
+            <option value="siren">🚨 사이렌 + 경보음 모드</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 단속 로그 피드 (localStorage 연동) -->
+    <div class="card log-card">
+      <div class="log-header">
+        <span>🚨 오늘의 소음 단속 장부 (<span id="today-count">0</span>회)</span>
+        <button class="btn-clear" onclick="clearLogs()">장부 초기화</button>
+      </div>
+      <div id="log-list" class="log-list">
+        <div style="text-align:center; color:var(--text-dim); padding:16px; font-size:0.8rem;">
+          아직 단속된 소음이 없습니다. (평화로움 🕊️)
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let isRunning = false;
+    let audioCtx = null;
+    let analyser = null;
+    let micStream = null;
+    let animFrame = null;
+    let currentThreshold = 75;
+    let isCooldown = false;
+    let wakeLock = null;
+
+    const MARA_VOICES = [
+      "아 시끄럽다고! 닥쳐라 좀!",
+      "입에 지퍼 안 채우냐? 닥치세요!",
+      "아가리 닥치세요! 귀 찢어지겠습니다!",
+      "야! 진짜 조용히 안 해? 뒤질래?",
+      "너네 집 안방이냐? 입 다물어라!",
+      "조용히 해! 혓바닥 뽑아버리기 전에!",
+      "시끄러워 뒤지겠네 진짜! 입 닫아라!"
+    ];
+
+    const SPICY_VOICES = [
+      "조용히 하라고 몇 번을 말합니까?",
+      "지금 여기가 시장통입니까? 입 다무세요!",
+      "업무 시간에 잡담 그만하고 일하세요!",
+      "데시벨 기준치를 초과했습니다. 조용히 하십시오.",
+      "목소리 낮추세요. 다 들립니다."
+    ];
+
+    async function togglePolice() {
+      const btn = document.getElementById('btn-toggle');
+      const badge = document.getElementById('status-badge');
+      const statusTxt = document.getElementById('status-text');
+
+      if (!isRunning) {
+        try {
+          micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+          
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          const source = audioCtx.createMediaStreamSource(micStream);
+          analyser = audioCtx.createAnalyser();
+          analyser.fftSize = 512;
+          analyser.smoothingTimeConstant = 0.3;
+          source.connect(analyser);
+
+          if ('wakeLock' in navigator) {
+            try { wakeLock = await navigator.wakeLock.request('screen'); } catch(e){}
+          }
+
+          isRunning = true;
+          btn.innerText = "🛑 감시 종료";
+          btn.className = "btn-main running";
+          badge.className = "status-badge active";
+          statusTxt.innerText = "실시간 감시 중 (귀 쫑긋)";
+
+          analyzeNoise();
+        } catch (err) {
+          alert("마이크 접근 권한을 허용해주세요: " + err.message);
+        }
+      } else {
+        stopPolice();
+      }
+    }
+
+    function stopPolice() {
+      isRunning = false;
+      if (animFrame) cancelAnimationFrame(animFrame);
+      if (micStream) micStream.getTracks().forEach(t => t.stop());
+      if (audioCtx) audioCtx.close();
+      if (wakeLock) wakeLock.release();
+
+      document.getElementById('btn-toggle').innerText = "🚨 소음 감시 시작 (마이크 ON)";
+      document.getElementById('btn-toggle').className = "btn-main";
+      document.getElementById('status-badge').className = "status-badge";
+      document.getElementById('status-text').innerText = "감시 대기 중";
+      document.getElementById('db-display').innerText = "0.0";
+      document.getElementById('db-display').style.color = "var(--neon-green)";
+      document.getElementById('gauge-bar').style.width = "0%";
+      document.body.className = "";
+    }
+
+    function analyzeNoise() {
+      if (!isRunning) return;
+
+      const dataArray = new Uint8Array(analyser.frequencyBinCount);
+      analyser.getByteTimeDomainData(dataArray);
+
+      let sum = 0;
+      for (let i = 0; i < dataArray.length; i++) {
+        let val = (dataArray[i] - 128) / 128;
+        sum += val * val;
+      }
+      let rms = Math.sqrt(sum / dataArray.length);
+
+      let db = Math.round(20 * Math.log10(rms) + 95);
+      if (db < 30) db = 30;
+      if (db > 105) db = 105;
+
+      const dbElem = document.getElementById('db-display');
+      dbElem.innerText = db.toFixed(1);
+
+      const gaugePercent = Math.min(Math.max((db - 30) / (100 - 30) * 100, 0), 100);
+      document.getElementById('gauge-bar').style.width = gaugePercent + "%";
+
+      if (db >= currentThreshold) {
+        dbElem.style.color = "var(--neon-red)";
+        if (!isCooldown) {
+          triggerRagePolice(db);
+        }
+      } else if (db >= currentThreshold - 10) {
+        dbElem.style.color = "var(--neon-yellow)";
+      } else {
+        dbElem.style.color = "var(--neon-green)";
+      }
+
+      animFrame = requestAnimationFrame(analyzeNoise);
+    }
+
+    function triggerRagePolice(detectedDb) {
+      isCooldown = true;
+      document.body.className = "pulse-warning";
+      document.getElementById('status-badge').className = "status-badge warning";
+      document.getElementById('status-text').innerText = "🚨 소음 적발! 호통 발동!";
+
+      const mode = document.getElementById('rage-mode').value;
+      let speakText = "";
+
+      if (mode === 'mara') {
+        speakText = MARA_VOICES[Math.floor(Math.random() * MARA_VOICES.length)];
+        speakRageTTS(speakText, 1.2, 1.0);
+      } else if (mode === 'spicy') {
+        speakText = SPICY_VOICES[Math.floor(Math.random() * SPICY_VOICES.length)];
+        speakRageTTS(speakText, 1.0, 0.9);
+      } else {
+        speakText = "🚨 삐--- 사이렌 경보 발동!";
+        playSirenSound();
+      }
+
+      if (navigator.vibrate) navigator.vibrate([300, 150, 300, 150, 400]);
+
+      saveLocalViolation(detectedDb, speakText);
+
+      setTimeout(() => {
+        isCooldown = false;
+        document.body.className = "";
+        if (isRunning) {
+          document.getElementById('status-badge').className = "status-badge active";
+          document.getElementById('status-text').innerText = "실시간 감시 중 (귀 쫑긋)";
+        }
+      }, 4500);
+    }
+
+    function speakRageTTS(text, rate = 1.1, pitch = 1.0) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = 'ko-KR';
+        utter.rate = rate;
+        utter.pitch = pitch;
+        utter.volume = 1.0;
+        window.speechSynthesis.speak(utter);
+      }
+    }
+
+    function playSirenSound() {
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+        osc.frequency.linearRampToValueAtTime(1400, audioCtx.currentTime + 0.3);
+        osc.frequency.linearRampToValueAtTime(800, audioCtx.currentTime + 0.6);
+        gain.gain.setValueAtTime(0.8, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1.2);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 1.2);
+      } catch(e){}
+    }
+
+    // ==========================================
+    // 로컬 스토리지 저장 (새로고침해도 유지)
+    // ==========================================
+    function saveLocalViolation(db, msg) {
+      const now = new Date();
+      const timeStr = now.toTimeString().split(' ')[0];
+      const logItem = { time: timeStr, db: db, msg: msg };
+
+      let logs = JSON.parse(localStorage.getItem('noise_police_logs') || '[]');
+      logs.unshift(logItem);
+      if (logs.length > 30) logs.pop();
+      localStorage.setItem('noise_police_logs', JSON.stringify(logs));
+
+      renderLogs();
+    }
+
+    function renderLogs() {
+      let logs = JSON.parse(localStorage.getItem('noise_police_logs') || '[]');
+      const list = document.getElementById('log-list');
+      document.getElementById('today-count').innerText = logs.length;
+
+      if (logs.length === 0) {
+        list.innerHTML = `<div style="text-align:center; color:var(--text-dim); padding:16px; font-size:0.8rem;">아직 단속된 소음이 없습니다. (평화로움 🕊️)</div>`;
+        return;
+      }
+
+      let html = '';
+      logs.forEach(log => {
+        html += `
+          <div class="log-item">
+            <div>
+              <div><strong>[${log.time}]</strong> ${escapeHtml(log.msg)}</div>
+            </div>
+            <div class="log-db">${parseFloat(log.db).toFixed(1)} dB</div>
+          </div>
+        `;
+      });
+      list.innerHTML = html;
+    }
+
+    function clearLogs() {
+      if (confirm('오늘의 단속 장부를 초기화하시겠습니까?')) {
+        localStorage.removeItem('noise_police_logs');
+        renderLogs();
+      }
+    }
+
+    function updateThreshold(val) {
+      currentThreshold = parseInt(val);
+      document.getElementById('threshold-text').innerText = val + " dB";
+      const percent = ((val - 50) / (95 - 50)) * 100;
+      document.getElementById('threshold-line').style.left = percent + "%";
+    }
+
+    function escapeHtml(str) {
+      return (str || '').replace(/[&<>'"]/g, 
+        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      updateThreshold(75);
+      renderLogs();
+    });
+  </script>
+</body>
+</html>
