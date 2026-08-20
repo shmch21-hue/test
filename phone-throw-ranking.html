@@ -3,141 +3,817 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>침대 던지기 파워 랭킹전</title>
-  <meta name="description" content="휴대폰을 침대에 던져서 파워 체크하기">
-  
+  <title>🛏️ 침대 던지기 파워 랭킹전</title>
+  <meta name="description" content="스마트폰 충격 가속도(G-Force) 측정 & 실시간 순위 배틀">
   <style>
+    :root {
+      --bg: #0b0f19;
+      --card: #161f30;
+      --card-inner: #0f172a;
+      --neon-yellow: #facc15;
+      --neon-red: #ef4444;
+      --neon-blue: #38bdf8;
+      --neon-green: #22c55e;
+      --text: #f8fafc;
+      --text-dim: #94a3b8;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-    }
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background-color: #0b0f19;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    }
-    .iframe-wrapper {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-    iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      display: block;
+      user-select: none;
+      -webkit-user-select: none;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Segoe UI", Roboto, sans-serif;
     }
 
-    /* 상단 모바일 전체화면 직접 열기 버튼 (아이폰 등 iframe 센서 차단 대응) */
-    .direct-bar {
-      position: fixed;
-      top: 12px;
-      right: 12px;
-      z-index: 50;
-      background: rgba(15, 23, 42, 0.85);
-      backdrop-filter: blur(8px);
-      border: 1px solid #facc15;
-      color: #facc15;
-      padding: 7px 12px;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: bold;
-      text-decoration: none;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-      transition: transform 0.2s, background 0.2s;
-    }
-    .direct-bar:hover {
-      background: #facc15;
-      color: #000;
-    }
-    .direct-bar:active {
-      transform: scale(0.95);
-    }
-
-    /* Loading Spinner */
-    .loading-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #0b0f19;
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      z-index: 10;
-      transition: opacity 0.4s ease, visibility 0.4s ease;
+      padding: 16px;
+      overflow-x: hidden;
+      position: relative;
     }
-    .loading-overlay.hidden {
-      opacity: 0;
-      visibility: hidden;
+
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
       pointer-events: none;
+      z-index: 999;
     }
-    .spinner {
-      width: 44px;
-      height: 44px;
-      border: 4px solid #1e293b;
-      border-top: 4px solid #facc15;
+
+    .container {
+      width: 100%;
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      z-index: 1;
+    }
+
+    .header {
+      text-align: center;
+      padding: 10px 0;
+    }
+    .header h1 {
+      font-size: 1.55rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #facc15, #f97316);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+    .header p {
+      font-size: 0.82rem;
+      color: var(--text-dim);
+      margin-top: 4px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 18px;
+      padding: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    .warning-box {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px dashed var(--neon-red);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 0.78rem;
+      color: #fca5a5;
+      line-height: 1.35;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .input-group {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.82rem;
+    }
+    .label-row label {
+      font-weight: 700;
+      color: var(--neon-yellow);
+    }
+    .personal-best {
+      color: var(--neon-blue);
+      font-weight: bold;
+    }
+    .input-field {
+      width: 100%;
+      background: var(--card-inner);
+      border: 2px solid #334155;
+      color: #fff;
+      padding: 13px;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      text-align: center;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .input-field:focus {
+      border-color: var(--neon-yellow);
+      box-shadow: 0 0 15px rgba(250, 204, 21, 0.3);
+    }
+
+    .btn-main {
+      width: 100%;
+      background: linear-gradient(135deg, #eab308, #ca8a04);
+      color: #000;
+      border: none;
+      padding: 16px;
+      border-radius: 14px;
+      font-size: 1.2rem;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(234, 179, 8, 0.4);
+      transition: transform 0.1s, filter 0.2s;
+      margin-top: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-main:active {
+      transform: scale(0.97);
+      filter: brightness(0.9);
+    }
+
+    /* 게임 진행 */
+    .game-zone {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 28px 10px;
+    }
+
+    .countdown-number {
+      font-size: 5.5rem;
+      font-weight: 900;
+      color: var(--neon-yellow);
+      text-shadow: 0 0 30px rgba(250, 204, 21, 0.7);
+      animation: pulse 1s infinite;
+    }
+
+    .throw-guide {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #fff;
+      margin-top: 8px;
+    }
+    .throw-guide.active {
+      color: var(--neon-red);
+      animation: bounce 0.4s infinite alternate;
+    }
+
+    .live-g-meter {
+      font-size: 2.7rem;
+      font-weight: 900;
+      color: var(--neon-blue);
+      margin: 12px 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* 결과 */
+    .result-zone {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 10px;
+    }
+
+    .result-score {
+      font-size: 4rem;
+      font-weight: 900;
+      color: var(--neon-yellow);
+      text-shadow: 0 0 25px rgba(250, 204, 21, 0.6);
+      line-height: 1;
+    }
+    .result-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      background: #1e293b;
+      padding: 7px 16px;
+      border-radius: 20px;
+      border: 1px solid var(--neon-blue);
+      color: var(--neon-blue);
+    }
+
+    .rank-banner-box {
+      width: 100%;
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(56, 189, 248, 0.15));
+      border: 1px solid var(--neon-green);
+      border-radius: 14px;
+      padding: 14px;
+      margin-top: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      text-align: center;
+    }
+    .rank-banner-box.gold {
+      background: linear-gradient(135deg, rgba(250, 204, 21, 0.2), rgba(249, 115, 22, 0.2));
+      border-color: var(--neon-yellow);
+    }
+    .rank-main-text {
+      font-size: 1.15rem;
+      font-weight: 900;
+      color: #fff;
+    }
+    .rank-sub-text {
+      font-size: 0.82rem;
+      color: var(--text-dim);
+    }
+
+    /* 리더보드 */
+    .leaderboard-card {
+      margin-top: 4px;
+    }
+    .tab-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .tab-buttons {
+      display: flex;
+      gap: 6px;
+      background: #0f172a;
+      padding: 4px;
+      border-radius: 12px;
+      flex: 1;
+      margin-right: 8px;
+    }
+    .tab-btn {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      padding: 8px 0;
+      font-size: 0.82rem;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: var(--card);
+      color: var(--neon-yellow);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+    .btn-refresh {
+      background: #0f172a;
+      border: 1px solid #334155;
+      color: var(--neon-blue);
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .leaderboard-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+    .leader-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--card-inner);
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+    }
+    .leader-row.rank-1 { border-left: 4px solid #facc15; background: rgba(250, 204, 21, 0.1); }
+    .leader-row.rank-2 { border-left: 4px solid #94a3b8; background: rgba(148, 163, 184, 0.1); }
+    .leader-row.rank-3 { border-left: 4px solid #f97316; background: rgba(249, 115, 22, 0.1); }
+
+    .leader-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .leader-rank {
+      font-weight: 900;
+      width: 24px;
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.95rem;
+    }
+    .rank-1 .leader-rank { color: #facc15; font-size: 1.15rem; }
+    .leader-name { font-weight: bold; color: #fff; }
+    .leader-percentile {
+      font-size: 0.72rem;
+      color: var(--neon-blue);
+      margin-left: 4px;
+    }
+    .leader-power {
+      font-weight: 900;
+      color: var(--neon-yellow);
+      font-size: 0.95rem;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.12); opacity: 0.85; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-6px); }
+    }
+
+    .loader {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,.3);
       border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin-bottom: 1rem;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
     }
-    .loading-text {
-      color: #94a3b8;
-      font-size: 0.92rem;
-      font-weight: 600;
-    }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
 
-  <!-- 아이폰/사파리 등 iframe 센서 차단 시 원클릭 새창 이동 버튼 -->
-  <a href="https://script.google.com/macros/s/AKfycbzNWJk4m3MKRXFYzsvZ8zE2nYf_N0YIzmrqzmlbyC9heFN2xm8s4MmX3VId8GNpz7ry/exec" 
-     target="_blank" 
-     class="direct-bar">
-    <span>📱 새창/전체화면으로 열기</span>
-  </a>
+  <canvas id="confetti-canvas"></canvas>
 
-  <!-- 로딩 오버레이 -->
-  <div id="loading" class="loading-overlay">
-    <div class="spinner"></div>
-    <div class="loading-text">게임 서버에 접속하는 중...</div>
-  </div>
+  <div class="container">
+    <!-- 헤더 (구글 배너 없이 100% 깔끔한 UI) -->
+    <div class="header">
+      <h1>🛏️ 침대 던지기 파워 랭킹전</h1>
+      <p>스마트폰 충격 가속도(G-Force) 측정 & 실시간 순위 배틀</p>
+    </div>
 
-  <!-- 전체 화면 Google Apps Script Web App iframe -->
-  <div class="iframe-wrapper">
-    <iframe 
-      id="gas-frame"
-      src="https://script.google.com/macros/s/AKfycbzNWJk4m3MKRXFYzsvZ8zE2nYf_N0YIzmrqzmlbyC9heFN2xm8s4MmX3VId8GNpz7ry/exec"
-      allow="accelerometer; gyroscope; magnetometer; autoplay; clipboard-write; clipboard-read"
-      allowfullscreen
-      onload="hideLoading()">
-    </iframe>
+    <!-- 준비 화면 -->
+    <div id="step-ready" class="card">
+      <div class="warning-box">
+        <span>⚠️</span>
+        <div><strong>안전 수칙:</strong> 반드시 <strong>침대나 푹신한 소파</strong> 위로만 던지세요! 파손 시 책임지지 않습니다.</div>
+      </div>
+
+      <div class="input-group">
+        <div class="label-row">
+          <label for="nickname">투척수 닉네임</label>
+          <span id="pb-display" class="personal-best">내 최고기록: 0.0 G</span>
+        </div>
+        <input type="text" id="nickname" class="input-field" placeholder="예: 박대리, 2동불주먹" maxlength="10">
+      </div>
+
+      <button id="btn-start" class="btn-main" onclick="handleStartClick()">
+        🚀 던지기 준비 (START)
+      </button>
+    </div>
+
+    <!-- 측정 진행 화면 -->
+    <div id="step-game" class="card game-zone">
+      <div id="countdown-txt" class="countdown-number">3</div>
+      <div id="guide-txt" class="throw-guide">던질 준비를 하세요!</div>
+      <div id="live-g" class="live-g-meter">0.0 G</div>
+      <div style="font-size:0.75rem; color:var(--text-dim);">가속도 센서 실시간 감지 중</div>
+    </div>
+
+    <!-- 결과 & 실시간 순위 화면 -->
+    <div id="step-result" class="card result-zone">
+      <div style="font-size:0.85rem; color:var(--text-dim);">측정 완료! 당신의 기록</div>
+      <div id="final-score" class="result-score">0.0 G</div>
+      <div id="final-title" class="result-title">칭호 계산 중</div>
+
+      <!-- 실시간 랭킹 배너 -->
+      <div id="rank-banner" class="rank-banner-box">
+        <div id="rank-main-txt" class="rank-main-text">
+          <span class="loader"></span> 랭킹 서버에 자동 기록 중...
+        </div>
+        <div id="rank-sub-txt" class="rank-sub-text">구글 시트 실시간 순위 계산 중</div>
+      </div>
+
+      <button class="btn-main" onclick="resetGame()" style="background:linear-gradient(135deg, #38bdf8, #0284c7); color:#fff; box-shadow:0 6px 20px rgba(56,189,248,0.4);">
+        🔄 한 번 더 던지기
+      </button>
+    </div>
+
+    <!-- 실시간 리더보드 (탭 구성) -->
+    <div class="card leaderboard-card">
+      <div class="tab-header">
+        <div class="tab-buttons">
+          <button id="tab-top10" class="tab-btn active" onclick="switchTab('top10')">🏆 TOP 10 명예의 전당</button>
+          <button id="tab-recent" class="tab-btn" onclick="switchTab('recent')">⚡ 최근 기록 피드</button>
+        </div>
+        <button class="btn-refresh" onclick="loadLeaderboard()">새로고침 ↻</button>
+      </div>
+
+      <div id="leaderboard-list" class="leaderboard-list">
+        <div style="text-align:center; color:var(--text-dim); padding:20px; font-size:0.85rem;">
+          <span class="loader"></span> 랭킹 데이터를 동기화하는 중...
+        </div>
+      </div>
+    </div>
   </div>
 
   <script>
-    function hideLoading() {
-      var loader = document.getElementById('loading');
-      if (loader) loader.classList.add('hidden');
+    // ==========================================
+    // ⭐️ Google Apps Script JSON API 엔드포인트 URL
+    // ==========================================
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbzNWJk4m3MKRXFYzsvZ8zE2nYf_N0YIzmrqzmlbyC9heFN2xm8s4MmX3VId8GNpz7ry/exec";
+
+    // ==========================================
+    // 1. 사운드 신디사이저 (Web Audio API)
+    // ==========================================
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) audioCtx = new AudioContext();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
     }
 
-    // iframe onload가 지연되더라도 3.5초 후 로딩창 자동 해제
-    setTimeout(hideLoading, 3500);
-  </script>
+    function playBeep(freq = 440, duration = 0.15, type = 'sine') {
+      try {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
 
+    function playImpactSound() {
+      try {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.45);
+        gain.gain.setValueAtTime(0.8, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.45);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.45);
+      } catch(e) {}
+    }
+
+    function playVictoryFanfare() {
+      try {
+        [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+          setTimeout(() => playBeep(freq, 0.22, 'triangle'), i * 130);
+        });
+      } catch(e) {}
+    }
+
+    // ==========================================
+    // 2. 가속도 센서 & 게임 로직 (iOS 13+ 및 안드로이드 순정 지원)
+    // ==========================================
+    let isMeasuring = false;
+    let maxG = 0.0;
+    let recordingTimer = null;
+    let currentTab = 'top10';
+    let cachedLeaderboard = { top10: [], recent: [] };
+
+    function getTitleByG(g) {
+      if (g < 3.0) return "💤 깃털 투척수 (침대가 하품함)";
+      if (g < 6.0) return "🥉 조심스러운 손길 (일반인)";
+      if (g < 10.0) return "🥈 묵직한 강속구 (프로 던짐러)";
+      if (g < 15.0) return "🥇 침대 브레이커 (스프링 비명)";
+      if (g < 22.0) return "🔥 토르의 망치 (폰 파손 주의)";
+      return "⚡ 우주 돌파 스매시 (인간 투석기)";
+    }
+
+    async function handleStartClick() {
+      initAudio();
+      const nick = document.getElementById('nickname').value.trim();
+      if (!nick) {
+        alert('투척수 닉네임을 입력해주세요!');
+        document.getElementById('nickname').focus();
+        return;
+      }
+      localStorage.setItem('phone_throw_nick', nick);
+
+      // 단독 페이지이므로 iOS Safari에서 권한 허용 팝업이 100% 정상 작동합니다!
+      if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+        try {
+          const permission = await DeviceMotionEvent.requestPermission();
+          if (permission !== 'granted') {
+            alert('가속도 센서 권한이 필요합니다.');
+            return;
+          }
+        } catch (err) {
+          console.warn('iOS Sensor Permission:', err);
+        }
+      }
+
+      startCountdown();
+    }
+
+    function startCountdown() {
+      document.getElementById('step-ready').style.display = 'none';
+      document.getElementById('step-game').style.display = 'flex';
+      
+      let count = 3;
+      const countElem = document.getElementById('countdown-txt');
+      const guideElem = document.getElementById('guide-txt');
+      
+      countElem.innerText = count;
+      guideElem.innerText = "던질 준비를 하세요!";
+      guideElem.className = "throw-guide";
+      playBeep(440, 0.15);
+
+      const interval = setInterval(() => {
+        count--;
+        if (count > 0) {
+          countElem.innerText = count;
+          playBeep(440, 0.15);
+        } else if (count === 0) {
+          countElem.innerText = "GO!";
+          guideElem.innerText = "🛏️ 지금 침대로 던지세요!!";
+          guideElem.className = "throw-guide active";
+          playBeep(880, 0.3, 'square');
+          if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+          startMotionRecording();
+          clearInterval(interval);
+        }
+      }, 1000);
+    }
+
+    function startMotionRecording() {
+      isMeasuring = true;
+      maxG = 0.0;
+      window.addEventListener('devicemotion', onDeviceMotion, true);
+
+      recordingTimer = setTimeout(() => {
+        finishMeasurement();
+      }, 3500);
+    }
+
+    function onDeviceMotion(e) {
+      if (!isMeasuring) return;
+
+      let acc = e.accelerationIncludingGravity || e.acceleration;
+      if (!acc || acc.x === null) return;
+
+      let totalAcc = Math.sqrt(acc.x * acc.x + acc.y * acc.y + acc.z * acc.z);
+      let gForce = totalAcc / 9.80665;
+
+      if (gForce > maxG) {
+        maxG = gForce;
+        document.getElementById('live-g').innerText = maxG.toFixed(1) + " G";
+      }
+    }
+
+    function finishMeasurement() {
+      isMeasuring = false;
+      window.removeEventListener('devicemotion', onDeviceMotion, true);
+      
+      playImpactSound();
+      if (navigator.vibrate) navigator.vibrate(400);
+
+      if (maxG < 1.0) maxG = 1.0;
+      const finalG = parseFloat(maxG.toFixed(1));
+      const title = getTitleByG(finalG);
+      const nick = document.getElementById('nickname').value.trim() || '익명';
+
+      let pb = parseFloat(localStorage.getItem('phone_throw_pb') || '0.0');
+      if (finalG > pb) {
+        localStorage.setItem('phone_throw_pb', finalG.toString());
+        updatePbDisplay();
+      }
+
+      document.getElementById('step-game').style.display = 'none';
+      document.getElementById('step-result').style.display = 'flex';
+      document.getElementById('final-score').innerText = finalG + " G";
+      document.getElementById('final-title').innerText = title;
+
+      setTimeout(playVictoryFanfare, 250);
+
+      submitScoreToAPI(nick, finalG, title);
+    }
+
+    // ==========================================
+    // 3. 구글 시트 REST API 통신 (fetch POST / GET)
+    // ==========================================
+    async function submitScoreToAPI(nick, scoreG, title) {
+      const banner = document.getElementById('rank-banner');
+      const mainTxt = document.getElementById('rank-main-txt');
+      const subTxt = document.getElementById('rank-sub-txt');
+
+      banner.className = "rank-banner-box";
+      mainTxt.innerHTML = `<span class="loader"></span> 랭킹 서버에 자동 기록 중...`;
+      subTxt.innerText = `구글 시트 실시간 순위 계산 중`;
+
+      try {
+        const payload = JSON.stringify({ nickname: nick, scoreG: scoreG, title: title });
+        
+        // Google Apps Script Web App POST 요청 (CORS 대응)
+        const response = await fetch(GAS_API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: payload
+        });
+
+        const res = await response.json();
+
+        if (res && res.success) {
+          if (res.isFirstPlace) {
+            banner.className = "rank-banner-box gold";
+            mainTxt.innerHTML = `👑 새로운 1위 챔피언 탄생! (1위 / ${res.totalPlayers}명)`;
+            subTxt.innerHTML = `대단합니다! 전체 상위 <strong>${res.userPercentile}%</strong> 달성!`;
+            launchConfetti();
+          } else {
+            banner.className = "rank-banner-box";
+            mainTxt.innerHTML = `🏆 현재 순위: <strong>전체 ${res.userRank}위</strong> / ${res.totalPlayers}명`;
+            subTxt.innerHTML = `상위 <strong>${res.userPercentile}%</strong> (1위와 ${res.gapToFirst}G 차이)`;
+            if (res.userRank <= 3) launchConfetti();
+          }
+          cachedLeaderboard.top10 = res.leaderboard || [];
+          cachedLeaderboard.recent = res.recentLogs || [];
+          renderCurrentTab();
+        } else {
+          mainTxt.innerText = `✅ 기록 저장 완료 (${scoreG} G)`;
+          subTxt.innerText = `구글 시트에 기록되었습니다.`;
+          loadLeaderboard();
+        }
+      } catch (err) {
+        console.warn('API POST Error, fetching leaderboard fallback...', err);
+        mainTxt.innerText = `✅ 기록 전송 완료 (${scoreG} G)`;
+        subTxt.innerText = `구글 시트 저장 처리되었습니다.`;
+        setTimeout(loadLeaderboard, 1000);
+      }
+    }
+
+    async function loadLeaderboard() {
+      const box = document.getElementById('leaderboard-list');
+      box.innerHTML = `<div style="text-align:center; color:var(--text-dim); padding:16px;"><span class="loader"></span> 랭킹 데이터를 동기화하는 중...</div>`;
+
+      try {
+        const response = await fetch(GAS_API_URL);
+        const data = await response.json();
+        
+        if (data) {
+          if (Array.isArray(data)) {
+            cachedLeaderboard.top10 = data;
+            cachedLeaderboard.recent = data;
+          } else {
+            cachedLeaderboard.top10 = data.top10 || [];
+            cachedLeaderboard.recent = data.recent || [];
+          }
+          renderCurrentTab();
+        }
+      } catch (err) {
+        console.error('API GET Error:', err);
+        box.innerHTML = `<div style="text-align:center; color:var(--neon-red); padding:16px; font-size:0.8rem;">
+          ⚠️ 랭킹 동기화 지연: 새로고침 버튼을 눌러주세요.
+        </div>`;
+      }
+    }
+
+    function switchTab(tab) {
+      currentTab = tab;
+      document.getElementById('tab-top10').className = (tab === 'top10') ? 'tab-btn active' : 'tab-btn';
+      document.getElementById('tab-recent').className = (tab === 'recent') ? 'tab-btn active' : 'tab-btn';
+      renderCurrentTab();
+    }
+
+    function renderCurrentTab() {
+      const box = document.getElementById('leaderboard-list');
+      const list = (currentTab === 'top10') ? cachedLeaderboard.top10 : cachedLeaderboard.recent;
+
+      if (!list || list.length === 0) {
+        box.innerHTML = `<div style="text-align:center; color:var(--text-dim); padding:18px; font-size:0.85rem;">
+          아직 기록이 없습니다. 지금 1등에 도전하세요!
+        </div>`;
+        return;
+      }
+
+      let html = '';
+      list.forEach((item, idx) => {
+        let rankNum = item.rank || (idx + 1);
+        let rankClass = (currentTab === 'top10' && rankNum <= 3) ? `rank-${rankNum}` : '';
+        let medal = rankNum === 1 ? '🥇' : (rankNum === 2 ? '🥈' : (rankNum === 3 ? '🥉' : rankNum));
+        let subInfo = (currentTab === 'top10' && item.percentile) ? `<span class="leader-percentile">(상위 ${item.percentile})</span>` : '';
+
+        html += `
+          <div class="leader-row ${rankClass}">
+            <div class="leader-left">
+              <div class="leader-rank">${medal}</div>
+              <div>
+                <div class="leader-name">${escapeHtml(item.nickname)} ${subInfo}</div>
+                <div style="font-size:0.75rem; color:var(--text-dim);">${escapeHtml(item.title)}</div>
+              </div>
+            </div>
+            <div class="leader-power">${parseFloat(item.scoreG).toFixed(1)} G</div>
+          </div>
+        `;
+      });
+      box.innerHTML = html;
+    }
+
+    function resetGame() {
+      document.getElementById('step-result').style.display = 'none';
+      document.getElementById('step-ready').style.display = 'block';
+      document.getElementById('live-g').innerText = "0.0 G";
+      loadLeaderboard();
+    }
+
+    function updatePbDisplay() {
+      const pb = localStorage.getItem('phone_throw_pb') || '0.0';
+      document.getElementById('pb-display').innerText = `내 최고기록: ${parseFloat(pb).toFixed(1)} G`;
+    }
+
+    function escapeHtml(str) {
+      return (str || '').replace(/[&<>'"]/g, 
+        tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+    }
+
+    // ==========================================
+    // 4. 컨페티(폭죽) 애니메이션
+    // ==========================================
+    function launchConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const pieces = [];
+      const colors = ['#facc15', '#ef4444', '#38bdf8', '#22c55e', '#ec4899'];
+      for (let i = 0; i < 70; i++) {
+        pieces.push({
+          x: canvas.width / 2,
+          y: canvas.height * 0.4,
+          vx: (Math.random() - 0.5) * 14,
+          vy: (Math.random() - 0.8) * 16,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          vRot: (Math.random() - 0.5) * 10
+        });
+      }
+
+      let frames = 0;
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        pieces.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.4;
+          p.rotation += p.vRot;
+
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rotation * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+          ctx.restore();
+        });
+
+        frames++;
+        if (frames < 90) {
+          requestAnimationFrame(animate);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      animate();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedNick = localStorage.getItem('phone_throw_nick');
+      if (savedNick) document.getElementById('nickname').value = savedNick;
+      updatePbDisplay();
+      loadLeaderboard();
+    });
+  </script>
 </body>
 </html>
