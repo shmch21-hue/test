@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🔓 전설의 금고털이 (Safe Cracker Speedrun)</title>
+  <meta name="description" content="스마트폰을 다이얼처럼 직접 돌려서 3중 잠금장치를 해금하는 손맛 넘치는 피지컬 자물쇠 게임">
+
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card: #161f30;
+      --card-inner: #0f172a;
+      --gold: #facc15;
+      --gold-dark: #ca8a04;
+      --neon-red: #ef4444;
+      --neon-green: #10b981;
+      --neon-blue: #38bdf8;
+      --text: #f8fafc;
+      --text-dim: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 14px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      z-index: 1;
+    }
+
+    /* 헤더 */
+    .header {
+      text-align: center;
+      padding: 4px 0;
+    }
+    .header h1 {
+      font-size: 1.55rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #facc15, #f59e0b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+    .header p {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+
+    /* 카드 */
+    .card {
+      background: var(--card);
+      border-radius: 20px;
+      padding: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.6);
+      width: 100%;
+    }
+
+    /* 닉네임 입력창 */
+    .nickname-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 12px;
+    }
+    .nickname-label {
+      font-size: 0.8rem;
+      font-weight: bold;
+      color: var(--gold);
+    }
+    .nickname-input {
+      width: 100%;
+      background: var(--card-inner);
+      border: 2px solid #334155;
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: bold;
+      text-align: center;
+      outline: none;
+      transition: all 0.2s;
+    }
+    .nickname-input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 12px rgba(250, 204, 21, 0.3);
+    }
+
+    /* HUD 상태바 (타이머 & 핀 인디케이터) */
+    .hud-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding: 0 4px;
+    }
+
+    .timer-badge {
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: var(--neon-blue);
+      font-variant-numeric: tabular-nums;
+      background: #0f172a;
+      padding: 6px 14px;
+      border-radius: 12px;
+      border: 1px solid #334155;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pin-indicators {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .pin-led {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #334155;
+      border: 2px solid #475569;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 900;
+      color: #64748b;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .pin-led.active {
+      background: #ef4444;
+      border-color: #f87171;
+      color: #fff;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.8);
+      animation: blink 0.8s infinite alternate;
+    }
+    .pin-led.unlocked {
+      background: var(--neon-green);
+      border-color: #34d399;
+      color: #000;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.9);
+      transform: scale(1.15);
+      animation: none;
+    }
+
+    @keyframes blink {
+      from { opacity: 0.6; }
+      to { opacity: 1; }
+    }
+
+    /* 메인 금고 다이얼 스테이지 */
+    .vault-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 6px 0;
+      position: relative;
+    }
+
+    .dial-wrapper {
+      position: relative;
+      width: 250px;
+      height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 8px 0;
+    }
+
+    .dial-pointer {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 9px solid transparent;
+      border-right: 9px solid transparent;
+      border-top: 16px solid var(--neon-red);
+      z-index: 10;
+      filter: drop-shadow(0 2px 5px rgba(239, 68, 68, 0.8));
+    }
+
+    .dial-plate {
+      width: 230px;
+      height: 230px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #334155 0%, #1e293b 70%, #0f172a 100%);
+      border: 8px solid #475569;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.8), inset 0 2px 10px rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      cursor: grab;
+      touch-action: none;
+      transition: transform 0.05s linear;
+    }
+    .dial-plate:active { cursor: grabbing; }
+
+    .dial-numbers {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+    }
+    .dial-num {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      left: calc(50% - 10px);
+      top: 10px;
+      text-align: center;
+      font-size: 0.72rem;
+      font-weight: 900;
+      color: #94a3b8;
+      transform-origin: 50% 105px;
+    }
+
+    .dial-knob {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #facc15 0%, #ca8a04 80%, #713f12 100%);
+      border: 4px solid #fef08a;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.6), inset 0 2px 5px rgba(255,255,255,0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+    }
+    .knob-angle {
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: #000;
+      line-height: 1;
+    }
+    .knob-unit {
+      font-size: 0.65rem;
+      font-weight: 900;
+      color: #713f12;
+    }
+
+    .direction-hint {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #fff;
+      margin-top: 10px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .target-hint {
+      font-size: 0.76rem;
+      color: var(--text-dim);
+      margin-top: 3px;
+    }
+
+    /* 해금 성공 팝업 */
+    .vault-unlocked-card {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 16px 10px;
+      animation: vaultOpen 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes vaultOpen {
+      from { transform: scale(0.6); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .vault-gold-icon {
+      font-size: 4.8rem;
+      margin-bottom: 2px;
+      animation: goldGlow 0.8s infinite alternate;
+    }
+    @keyframes goldGlow {
+      from { transform: scale(1); filter: drop-shadow(0 0 10px rgba(250, 204, 21, 0.4)); }
+      to { transform: scale(1.08); filter: drop-shadow(0 0 25px rgba(250, 204, 21, 0.9)); }
+    }
+    .vault-title {
+      font-size: 1.8rem;
+      font-weight: 900;
+      color: var(--gold);
+    }
+    .vault-record {
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: var(--neon-blue);
+      margin: 6px 0;
+    }
+    .rank-banner-box {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid var(--neon-green);
+      border-radius: 12px;
+      padding: 10px 16px;
+      margin-top: 4px;
+      width: 100%;
+    }
+
+    /* 버튼 */
+    .btn-main {
+      width: 100%;
+      background: linear-gradient(135deg, #facc15, #eab308);
+      color: #000;
+      border: none;
+      padding: 16px;
+      border-radius: 14px;
+      font-size: 1.15rem;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(250, 204, 21, 0.4);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+      transition: transform 0.1s;
+    }
+    .btn-main:active { transform: scale(0.97); }
+
+    .btn-secondary {
+      background: #334155;
+      color: #fff;
+      box-shadow: none;
+      padding: 12px;
+      font-size: 0.9rem;
+      margin-top: 6px;
+    }
+
+    /* 랭킹 보드 */
+    .leaderboard-card {
+      margin-top: 2px;
+    }
+    .leaderboard-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.88rem;
+      font-weight: bold;
+      color: var(--gold);
+      margin-bottom: 10px;
+    }
+    .leaderboard-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+    .leader-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--card-inner);
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+    }
+    .leader-row.rank-1 { border-left: 3px solid #facc15; background: rgba(250, 204, 21, 0.1); }
+    .leader-row.rank-2 { border-left: 3px solid #94a3b8; }
+    .leader-row.rank-3 { border-left: 3px solid #f97316; }
+    .leader-time { font-weight: 900; color: var(--neon-blue); }
+
+    .pc-slider-box {
+      width: 100%;
+      margin-top: 10px;
+      background: #0f172a;
+      padding: 10px;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .slider { width: 100%; accent-color: var(--gold); }
+
+    .loader {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="container">
+    <!-- 헤더 -->
+    <div class="header">
+      <h1>🔓 전설의 금고털이</h1>
+      <p>스마트폰을 책상 위에서 돌려 3개의 핀을 해금하세요!</p>
+    </div>
+
+    <!-- 메인 게임 카드 -->
+    <div id="game-card" class="card">
+      <!-- 닉네임 입력창 -->
+      <div id="nickname-box" class="nickname-group">
+        <label for="nickname-input" class="nickname-label">괴도 닉네임</label>
+        <input type="text" id="nickname-input" class="nickname-input" placeholder="예: 루팡3세, 금고브레이커" maxlength="10">
+      </div>
+
+      <!-- HUD 헤더 (타이머 & 3단 핀 램프) -->
+      <div class="hud-row">
+        <div class="timer-badge">
+          <span>⏱️</span>
+          <span id="timer-display">00:00.00</span>
+        </div>
+
+        <div class="pin-indicators">
+          <div id="pin-led-1" class="pin-led active">1</div>
+          <div id="pin-led-2" class="pin-led">2</div>
+          <div id="pin-led-3" class="pin-led">3</div>
+        </div>
+      </div>
+
+      <!-- 다이얼 인터랙션 무대 -->
+      <div id="vault-stage" class="vault-stage">
+        <div class="dial-wrapper">
+          <div class="dial-pointer"></div>
+          
+          <div id="dial-plate" class="dial-plate">
+            <div id="dial-numbers" class="dial-numbers"></div>
+
+            <div class="dial-knob">
+              <span id="current-angle-txt" class="knob-angle">0°</span>
+              <span class="knob-unit">DIAL</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 안내 힌트 -->
+        <div id="direction-hint" class="direction-hint">
+          <span id="dir-arrow">↻</span> <span id="dir-text">시계 방향으로 돌리세요!</span>
+        </div>
+        <div id="sub-hint" class="target-hint">정답 각도에 가까워지면 손맛(진동)과 소리가 납니다</div>
+      </div>
+
+      <!-- 해금 성공 화면 -->
+      <div id="unlocked-stage" class="vault-unlocked-card">
+        <div class="vault-gold-icon">💰</div>
+        <div class="vault-title">금고 해금 완료!</div>
+        <div style="font-size:0.82rem; color:var(--text-dim); margin-top:4px;">당신의 해금 스피드런 기록</div>
+        <div id="final-time-txt" class="vault-record">00:14.28</div>
+        <div id="rank-status-banner" class="rank-banner-box">
+          <span class="loader"></span> 구글 시트 명예의 전당에 등록 중...
+        </div>
+      </div>
+
+      <!-- 컨트롤 버튼 -->
+      <button id="btn-start" class="btn-main" onclick="startHeistGame()">
+        🚨 금고털이 시작 (센서 켜기)
+      </button>
+
+      <button id="btn-retry" class="btn-main btn-secondary" onclick="resetHeistGame()" style="display:none;">
+        🔄 한 번 더 도전하기
+      </button>
+
+      <!-- PC 테스트용 슬라이더 -->
+      <div class="pc-slider-box">
+        <div style="font-size:0.72rem; color:var(--text-dim); display:flex; justify-content:space-between;">
+          <span>🕹️ PC/마우스 회전 테스트</span>
+          <span id="slider-val-txt">0°</span>
+        </div>
+        <input type="range" id="pc-slider" class="slider" min="0" max="359" value="0" oninput="handleSliderRotate(this.value)">
+      </div>
+    </div>
+
+    <!-- 실시간 스피드런 리더보드 -->
+    <div class="card leaderboard-card">
+      <div class="leaderboard-title">
+        <span>🏆 최단시간 금고털이 랭킹</span>
+        <span style="font-size:0.75rem; color:var(--neon-blue); cursor:pointer;" onclick="loadLeaderboardFromAPI()">새로고침 ↻</span>
+      </div>
+      <div id="leaderboard-list" class="leaderboard-list">
+        <div style="text-align:center; color:var(--text-dim); padding:12px; font-size:0.8rem;">
+          <span class="loader"></span> 랭킹 데이터를 동기화하는 중...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // ⭐️ Google Apps Script JSON API 엔드포인트 URL
+    // ==========================================
+    const GAS_API_URL = "https://script.google.com/macros/s/AKfycbw6ib_DRWWTD3f26E_QcFJonJRKaBEA6Dq31K6L2qzPt5N7QOApCDtBNcdIHHibjklT/exec";
+
+    // ==========================================
+    // 1. 사운드 신디사이저 (Web Audio API)
+    // ==========================================
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function initAudio() {
+      if (!audioCtx) audioCtx = new AudioCtx();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playGearClick() {
+      try {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(800 + Math.random() * 200, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.03);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.03);
+      } catch (e) {}
+    }
+
+    function playNearTick() {
+      try {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.05);
+      } catch (e) {}
+    }
+
+    function playHeavyClank() {
+      try {
+        if (!audioCtx) return;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(250, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.35);
+        gain.gain.setValueAtTime(0.7, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.35);
+      } catch (e) {}
+    }
+
+    function playVaultOpenSound() {
+      try {
+        if (!audioCtx) return;
+        [392.00, 523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+          setTimeout(() => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.value = freq;
+            gain.gain.setValueAtTime(0.35, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.4);
+          }, i * 120);
+        });
+      } catch (e) {}
+    }
+
+    // ==========================================
+    // 2. 게임 상태 & 비밀번호 메커니즘
+    // ==========================================
+    let isPlaying = false;
+    let currentPinStep = 0;
+    let secretPins = [60, 210, 330];
+    let pinDirections = ['CW', 'CCW', 'CW'];
+    let currentAngle = 0;
+    let lastClickAngle = 0;
+    let lockHoldStartTime = null;
+    let gameStartTime = null;
+    let timerInterval = null;
+    let initialAlphaOffset = 0;
+    let hasOffset = false;
+
+    function initDialGraphics() {
+      const numBox = document.getElementById('dial-numbers');
+      numBox.innerHTML = '';
+      for (let deg = 0; deg < 360; deg += 30) {
+        const item = document.createElement('div');
+        item.className = 'dial-num';
+        item.innerText = deg / 10;
+        item.style.transform = `rotate(${deg}deg)`;
+        numBox.appendChild(item);
+      }
+    }
+
+    function generateNewSecretPins() {
+      const p1 = Math.floor(Math.random() * 340) + 10;
+      const p2 = (p1 + 90 + Math.floor(Math.random() * 120)) % 360;
+      const p3 = (p2 + 90 + Math.floor(Math.random() * 120)) % 360;
+      secretPins = [p1, p2, p3];
+    }
+
+    // ==========================================
+    // 3. 자이로스코프 센서 핸들러
+    // ==========================================
+    async function startHeistGame() {
+      initAudio();
+      const nick = document.getElementById('nickname-input').value.trim();
+      if (!nick) {
+        alert('괴도 닉네임을 입력해주세요!');
+        document.getElementById('nickname-input').focus();
+        return;
+      }
+      localStorage.setItem('safe_cracker_nick', nick);
+
+      generateNewSecretPins();
+
+      // iOS 자이로 센서 권한 요청
+      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+        try {
+          const perm = await DeviceOrientationEvent.requestPermission();
+          if (perm !== 'granted') {
+            alert('다이얼 회전 감지를 위해 자이로스코프 센서 권한이 필요합니다.');
+            return;
+          }
+        } catch (e) {
+          console.warn('iOS Orientation Error:', e);
+        }
+      }
+
+      window.addEventListener('deviceorientation', handleOrientation, true);
+      document.getElementById('btn-start').style.display = 'none';
+      document.getElementById('nickname-box').style.display = 'none';
+
+      isPlaying = true;
+      currentPinStep = 0;
+      hasOffset = false;
+      gameStartTime = performance.now();
+
+      updatePinLEDs();
+      updateDirectionHint();
+
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = setInterval(updateTimerHUD, 30);
+    }
+
+    function handleOrientation(e) {
+      if (!isPlaying) return;
+
+      let alpha = e.alpha;
+      if (alpha === null) return;
+
+      if (!hasOffset) {
+        initialAlphaOffset = alpha;
+        hasOffset = true;
+      }
+
+      let relativeAngle = Math.round((360 - (alpha - initialAlphaOffset)) % 360);
+      if (relativeAngle < 0) relativeAngle += 360;
+
+      processDialRotation(relativeAngle);
+    }
+
+    function handleSliderRotate(val) {
+      initAudio();
+      document.getElementById('slider-val-txt').innerText = val + "°";
+      if (!isPlaying) {
+        const nick = document.getElementById('nickname-input').value.trim() || '익명의 괴도';
+        localStorage.setItem('safe_cracker_nick', nick);
+        isPlaying = true;
+        generateNewSecretPins();
+        gameStartTime = performance.now();
+        timerInterval = setInterval(updateTimerHUD, 30);
+        updatePinLEDs();
+        updateDirectionHint();
+        document.getElementById('btn-start').style.display = 'none';
+        document.getElementById('nickname-box').style.display = 'none';
+      }
+      processDialRotation(parseInt(val));
+    }
+
+    // ==========================================
+    // 4. 다이얼 물리 및 자물쇠 체결 로직
+    // ==========================================
+    function processDialRotation(targetDeg) {
+      currentAngle = targetDeg;
+
+      document.getElementById('dial-plate').style.transform = `rotate(${-currentAngle}deg)`;
+      document.getElementById('current-angle-txt').innerText = currentAngle + "°";
+
+      if (Math.abs(currentAngle - lastClickAngle) >= 8) {
+        playGearClick();
+        if (navigator.vibrate) navigator.vibrate(8);
+        lastClickAngle = currentAngle;
+      }
+
+      checkPinAlignment();
+    }
+
+    function checkPinAlignment() {
+      const targetPinAngle = secretPins[currentPinStep];
+      let diff = Math.abs(currentAngle - targetPinAngle);
+      if (diff > 180) diff = 360 - diff;
+
+      if (diff <= 12 && diff > 3) {
+        playNearTick();
+        if (navigator.vibrate) navigator.vibrate(15);
+      }
+
+      if (diff <= 3) {
+        if (!lockHoldStartTime) {
+          lockHoldStartTime = performance.now();
+        } else {
+          const heldDuration = performance.now() - lockHoldStartTime;
+          if (heldDuration >= 400) {
+            unlockCurrentPin();
+          }
+        }
+      } else {
+        lockHoldStartTime = null;
+      }
+    }
+
+    function unlockCurrentPin() {
+      lockHoldStartTime = null;
+      playHeavyClank();
+      if (navigator.vibrate) navigator.vibrate([60, 30, 120]);
+
+      const pinElem = document.getElementById(`pin-led-${currentPinStep + 1}`);
+      pinElem.className = 'pin-led unlocked';
+
+      currentPinStep++;
+
+      if (currentPinStep >= 3) {
+        completeVaultHeist();
+      } else {
+        updatePinLEDs();
+        updateDirectionHint();
+      }
+    }
+
+    function updatePinLEDs() {
+      for (let i = 0; i < 3; i++) {
+        const led = document.getElementById(`pin-led-${i + 1}`);
+        if (i < currentPinStep) led.className = 'pin-led unlocked';
+        else if (i === currentPinStep) led.className = 'pin-led active';
+        else led.className = 'pin-led';
+      }
+    }
+
+    function updateDirectionHint() {
+      const dir = pinDirections[currentPinStep];
+      const arrowElem = document.getElementById('dir-arrow');
+      const textElem = document.getElementById('dir-text');
+
+      if (dir === 'CW') {
+        arrowElem.innerText = '↻';
+        textElem.innerText = `[${currentPinStep + 1}번 핀] 시계 방향으로 돌리세요!`;
+      } else {
+        arrowElem.innerText = '↺';
+        textElem.innerText = `[${currentPinStep + 1}번 핀] 반시계 방향으로 돌리세요!`;
+      }
+    }
+
+    // ==========================================
+    // 5. 최종 금고 해금 및 결과 전송
+    // ==========================================
+    function completeVaultHeist() {
+      isPlaying = false;
+      clearInterval(timerInterval);
+      window.removeEventListener('deviceorientation', handleOrientation, true);
+
+      const totalTimeMs = performance.now() - gameStartTime;
+      const seconds = (totalTimeMs / 1000).toFixed(2);
+      const timeStr = formatTimerString(totalTimeMs);
+      const nick = document.getElementById('nickname-input').value.trim() || '익명의 괴도';
+
+      document.getElementById('vault-stage').style.display = 'none';
+      document.getElementById('unlocked-stage').style.display = 'flex';
+      document.getElementById('final-time-txt').innerText = timeStr;
+      document.getElementById('btn-retry').style.display = 'flex';
+
+      playVaultOpenSound();
+      launchConfetti();
+
+      // 구글 시트 REST API로 클리어 기록 전송
+      submitRecordToAPI(nick, seconds);
+    }
+
+    async function submitRecordToAPI(nick, seconds) {
+      const banner = document.getElementById('rank-status-banner');
+      banner.innerHTML = `<span class="loader"></span> 구글 시트 명예의 전당에 기록 저장 중...`;
+
+      try {
+        const payload = JSON.stringify({
+          nickname: nick,
+          timeSeconds: parseFloat(seconds),
+          strikes: 0,
+          status: 'SUCCESS'
+        });
+
+        const res = await fetch(GAS_API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: payload
+        });
+
+        const data = await res.json();
+        if (data && data.success) {
+          banner.innerHTML = `🎉 <strong>전체 ${data.userRank}위</strong>에 등극했습니다! (총 ${data.totalPlayers}명 중)`;
+          renderLeaderboardData(data.leaderboard);
+        } else {
+          banner.innerText = `✅ 기록 등록 완료 (${seconds}초)`;
+          loadLeaderboardFromAPI();
+        }
+      } catch (err) {
+        console.warn('API POST Error, falling back to local leaderboard...', err);
+        banner.innerText = `✅ 기록 완료 (${seconds}초)`;
+        loadLeaderboardFromAPI();
+      }
+    }
+
+    async function loadLeaderboardFromAPI() {
+      const box = document.getElementById('leaderboard-list');
+      box.innerHTML = `<div style="text-align:center; color:var(--text-dim); padding:12px; font-size:0.8rem;"><span class="loader"></span> 랭킹 데이터를 동기화하는 중...</div>`;
+
+      try {
+        const res = await fetch(GAS_API_URL);
+        const data = await res.json();
+        if (data && data.leaderboard) {
+          renderLeaderboardData(data.leaderboard);
+        }
+      } catch (err) {
+        box.innerHTML = `<div style="text-align:center; color:var(--text-dim); padding:12px; font-size:0.8rem;">아직 등록된 랭커가 없습니다. 1등을 노려보세요!</div>`;
+      }
+    }
+
+    function renderLeaderboardData(list) {
+      const box = document.getElementById('leaderboard-list');
+      if (!list || list.length === 0) {
+        box.innerHTML = `<div style="text-align:center; color:var(--text-dim); padding:12px; font-size:0.8rem;">아직 해금 기록이 없습니다. 최초의 괴도가 되어보세요!</div>`;
+        return;
+      }
+
+      box.innerHTML = list.map((item, idx) => {
+        let rankClass = item.rank <= 3 ? `rank-${item.rank}` : '';
+        let medal = item.rank === 1 ? '🥇' : (item.rank === 2 ? '🥈' : (item.rank === 3 ? '🥉' : `${item.rank}위`));
+        return `
+          <div class="leader-row ${rankClass}">
+            <div>
+              <strong>${medal}</strong>
+              <span style="margin-left:6px; color:#fff; font-weight:bold;">${escapeHtml(item.nickname)}</span>
+            </div>
+            <div class="leader-time">${parseFloat(item.time).toFixed(2)}초</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function updateTimerHUD() {
+      if (!isPlaying || !gameStartTime) return;
+      const elapsed = performance.now() - gameStartTime;
+      document.getElementById('timer-display').innerText = formatTimerString(elapsed);
+    }
+
+    function formatTimerString(ms) {
+      const totalSec = Math.floor(ms / 1000);
+      const min = String(Math.floor(totalSec / 60)).padStart(2, '0');
+      const sec = String(totalSec % 60).padStart(2, '0');
+      const milli = String(Math.floor((ms % 1000) / 10)).padStart(2, '0');
+      return `${min}:${sec}.${milli}`;
+    }
+
+    function resetHeistGame() {
+      document.getElementById('unlocked-stage').style.display = 'none';
+      document.getElementById('vault-stage').style.display = 'flex';
+      document.getElementById('btn-retry').style.display = 'none';
+      document.getElementById('btn-start').style.display = 'flex';
+      document.getElementById('nickname-box').style.display = 'flex';
+      document.getElementById('timer-display').innerText = '00:00.00';
+    }
+
+    function escapeHtml(str) {
+      return (str || '').replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+    }
+
+    // ==========================================
+    // 컨페티 애니메이션
+    // ==========================================
+    function launchConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const pieces = [];
+      const colors = ['#facc15', '#f59e0b', '#38bdf8', '#10b981', '#ffffff'];
+      for (let i = 0; i < 70; i++) {
+        pieces.push({
+          x: canvas.width / 2,
+          y: canvas.height * 0.45,
+          vx: (Math.random() - 0.5) * 14,
+          vy: (Math.random() - 0.8) * 16,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          vRot: (Math.random() - 0.5) * 10
+        });
+      }
+
+      let frames = 0;
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        pieces.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.4;
+          p.rotation += p.vRot;
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rotation * Math.PI) / 180);
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+          ctx.restore();
+        });
+
+        frames++;
+        if (frames < 90) requestAnimationFrame(animate);
+        else ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+      animate();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const savedNick = localStorage.getItem('safe_cracker_nick');
+      if (savedNick) document.getElementById('nickname-input').value = savedNick;
+      initDialGraphics();
+      loadLeaderboardFromAPI();
+    });
+  </script>
+</body>
+</html>
