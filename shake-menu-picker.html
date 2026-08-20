@@ -276,18 +276,21 @@
       display: flex;
       justify-content: space-between;
     }
-    .history-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
     .history-tag {
       background: #0f172a;
-      padding: 4px 9px;
+      padding: 5px 10px;
       border-radius: 8px;
-      font-size: 0.72rem;
+      font-size: 0.74rem;
       color: var(--accent-glow);
       border: 1px solid #334155;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+    .history-time {
+      color: var(--text-dim);
+      font-size: 0.68rem;
     }
 
     .pc-sim-btn {
@@ -708,10 +711,17 @@
     // ==========================================
     // 히스토리 관리
     // ==========================================
+    function getNowTimeString() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      return `${h}:${m}`; // 예: "14:16" 형태 (잘림 없음)
+    }
+
     function saveHistory(name, emoji) {
       let history = JSON.parse(localStorage.getItem('shake_menu_history') || '[]');
-      history.unshift({ name: name, emoji: emoji, time: new Date().toLocaleTimeString().slice(0, 5) });
-      if (history.length > 7) history.pop();
+      history.unshift({ name: name, emoji: emoji, time: getNowTimeString() });
+      if (history.length > 8) history.pop();
       localStorage.setItem('shake_menu_history', JSON.stringify(history));
       renderHistory();
     }
@@ -725,7 +735,10 @@
       }
 
       container.innerHTML = history.map(item => `
-        <div class="history-tag">${item.emoji} ${escapeHtml(item.name)} (${item.time})</div>
+        <div class="history-tag">
+          <span>${item.emoji} ${escapeHtml(item.name)}</span>
+          <span class="history-time">${escapeHtml(item.time)}</span>
+        </div>
       `).join('');
     }
 
