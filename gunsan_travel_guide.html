@@ -32,12 +32,12 @@
       <div class="flex items-center justify-between">
         <span class="px-2.5 py-0.5 text-xs font-semibold bg-white/20 rounded-full tracking-wide">군산 당일치기 가이드</span>
         <button onclick="copySummary()" class="text-xs bg-white/20 active:bg-white/30 px-3 py-1 rounded-full flex items-center gap-1 transition">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke_linecap="round" stroke_linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
           요약 복사
         </button>
       </div>
       <h1 class="text-2xl font-black mt-2 tracking-tight">군산 낭만 여행 🗺️</h1>
-      <p class="text-teal-100 text-xs mt-0.5">맛집 10선 & 디저트·카페 10선 총정리</p>
+      <p class="text-teal-100 text-xs mt-0.5">물짜장 명소 & 엄선 맛집·디저트 총정리</p>
 
       <!-- 메인 탭 내비게이션 -->
       <nav class="flex gap-1.5 mt-4 bg-black/15 p-1 rounded-2xl">
@@ -45,10 +45,10 @@
           🗺️ 동선
         </button>
         <button onclick="switchMainTab('tab-food')" id="btn-food" class="main-tab-btn flex-1 py-2 text-xs font-medium rounded-xl text-center transition text-teal-100 hover:text-white">
-          🍽️ 맛집10
+          🍽️ 맛집모음
         </button>
         <button onclick="switchMainTab('tab-cafe')" id="btn-cafe" class="main-tab-btn flex-1 py-2 text-xs font-medium rounded-xl text-center transition text-teal-100 hover:text-white">
-          ☕ 디저트10
+          ☕ 디저트·카페
         </button>
         <button onclick="switchMainTab('tab-tips')" id="btn-tips" class="main-tab-btn flex-1 py-2 text-xs font-medium rounded-xl text-center transition text-teal-100 hover:text-white">
           💡 꿀팁
@@ -269,7 +269,7 @@
           <div class="bg-amber-50 border border-amber-200 rounded-2xl p-3.5">
             <span class="text-xs font-bold text-amber-900">🍜 코스 2: 먹방 & 빵지순례 동선</span>
             <p class="text-[11px] text-amber-700 mt-1 leading-snug">
-              군산 대표 매운맛 고추짜장/짬뽕, 갓 구운 빵, 100년 가옥 카페와 노포 연탄구이 코스.
+              군산 대표 매운맛 고추짜장 또는 물짜장 찐맛집, 갓 구운 빵과 노포 연탄구이 코스.
             </p>
           </div>
           
@@ -277,10 +277,17 @@
             
             <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-sm">
               <span class="text-xs font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded">11:00 AM 점심</span>
-              <h4 class="font-bold text-sm text-slate-800 mt-1">지린성 or 빈해원</h4>
-              <p class="text-xs text-slate-600 mt-0.5">화끈한 고추짜장 or 영화 타짜 촬영지 물짜장 & 탕수육</p>
+              <h4 class="font-bold text-sm text-slate-800 mt-1">국제반점 or 지린성 or 빈해원</h4>
+              <p class="text-xs text-slate-600 mt-0.5">감칠맛 물짜장 원탑 vs 화끈한 고추짜장 vs 문화재 목조건물 물짜장</p>
               
               <div class="mt-2.5 space-y-1.5 pt-1 border-t border-slate-100">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-medium text-slate-700 font-bold text-teal-800">국제반점 (물짜장 찐맛집):</span>
+                  <div class="flex gap-1.5">
+                    <a href="https://m.map.naver.com/search2/search.naver?query=군산국제반점" target="_blank" class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-md border border-emerald-200">네이버</a>
+                    <a href="https://map.kakao.com/link/search/군산국제반점" target="_blank" class="px-2.5 py-1 bg-yellow-50 text-yellow-800 font-semibold rounded-md border border-yellow-200">카카오</a>
+                  </div>
+                </div>
                 <div class="flex items-center justify-between text-xs">
                   <span class="font-medium text-slate-700">지린성 (고추짜장):</span>
                   <div class="flex gap-1.5">
@@ -289,7 +296,7 @@
                   </div>
                 </div>
                 <div class="flex items-center justify-between text-xs">
-                  <span class="font-medium text-slate-700">빈해원 (물짜장):</span>
+                  <span class="font-medium text-slate-700">빈해원 (문화재 물짜장):</span>
                   <div class="flex gap-1.5">
                     <a href="https://m.map.naver.com/search2/search.naver?query=군산빈해원" target="_blank" class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-md border border-emerald-200">네이버</a>
                     <a href="https://map.kakao.com/link/search/군산빈해원" target="_blank" class="px-2.5 py-1 bg-yellow-50 text-yellow-800 font-semibold rounded-md border border-yellow-200">카카오</a>
@@ -449,20 +456,39 @@
 
       </section>
 
-      <!-- ==================== 2. 맛집 모음 탭 (10선) ==================== -->
+      <!-- ==================== 2. 맛집 모음 탭 (11선) ==================== -->
       <section id="tab-food" class="main-tab-content hidden space-y-3.5">
         <div class="bg-rose-50 border border-rose-200 rounded-2xl p-3.5">
-          <span class="text-xs font-bold text-rose-900">🍽️ 군산 찐맛집 베스트 10선</span>
+          <span class="text-xs font-bold text-rose-900">🍽️ 군산 찐맛집 베스트 컬렉션</span>
           <p class="text-[11px] text-rose-700 mt-1 leading-snug">
-            정갈한 해물장부터 명물 중식, 노포 연탄구이, 로컬 분식까지 엄선했습니다.
+            현지인들이 손꼽는 물짜장 명소부터 정갈한 해물장, 노포 연탄구이까지 완비!
           </p>
         </div>
 
-        <!-- 1. 째보식당 -->
+        <!-- 1. 국제반점 (물짜장 찐맛집) -->
+        <div class="bg-white border-2 border-teal-500/30 rounded-2xl p-4 shadow-sm bg-gradient-to-br from-teal-50/20 to-white">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[11px] font-bold text-teal-800 bg-teal-100 px-2 py-0.5 rounded">👑 물짜장 찐맛집</span>
+              <h3 class="font-bold text-base text-slate-800 mt-1">국제반점</h3>
+            </div>
+            <span class="text-xs text-teal-600 font-bold">영화 《타짜》 촬영지</span>
+          </div>
+          <p class="text-xs text-slate-600 mt-1.5"><strong>대표 메뉴:</strong> 삼선물짜장, 사천물짜장, 찹쌀탕수육, 간짜장</p>
+          <div class="mt-2 bg-teal-50/80 border border-teal-150 rounded-lg p-2.5 text-xs text-teal-950 leading-relaxed">
+            🍜 <strong>물짜장 추천 포인트:</strong> 춘장 대신 해산물 육수와 전분으로 걸쭉하게 볶아내 감칠맛이 폭발하는 군산 물짜장의 정석! 현지 미식가들이 물짜장 맛으로는 군산 최고로 꼽는 집입니다. 바삭한 탕수육과 찰떡궁합!
+          </div>
+          <div class="mt-3 flex gap-2">
+            <a href="https://m.map.naver.com/search2/search.naver?query=군산국제반점" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
+            <a href="https://map.kakao.com/link/search/군산국제반점" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-yellow-50 text-yellow-800 font-semibold rounded-lg border border-yellow-200">카카오맵</a>
+          </div>
+        </div>
+
+        <!-- 2. 째보식당 -->
         <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
           <div class="flex justify-between items-start">
             <div>
-              <span class="text-[11px] font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded">1. 정갈한 해물장</span>
+              <span class="text-[11px] font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded">정갈한 해물장</span>
               <h3 class="font-bold text-base text-slate-800 mt-1">째보식당</h3>
             </div>
             <span class="text-xs text-rose-500 font-bold">★ 여심 1위</span>
@@ -475,11 +501,11 @@
           </div>
         </div>
 
-        <!-- 2. 한일옥 -->
+        <!-- 3. 한일옥 -->
         <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
           <div class="flex justify-between items-start">
             <div>
-              <span class="text-[11px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded">2. 80년 전통 고택</span>
+              <span class="text-[11px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded">80년 전통 고택</span>
               <h3 class="font-bold text-base text-slate-800 mt-1">한일옥</h3>
             </div>
             <span class="text-xs text-slate-400">초원사진관 앞</span>
@@ -492,11 +518,11 @@
           </div>
         </div>
 
-        <!-- 3. 지린성 -->
+        <!-- 4. 지린성 -->
         <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
           <div class="flex justify-between items-start">
             <div>
-              <span class="text-[11px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded">3. 화끈한 불맛 중식</span>
+              <span class="text-[11px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded">화끈한 불맛 중식</span>
               <h3 class="font-bold text-base text-slate-800 mt-1">지린성</h3>
             </div>
             <span class="text-xs text-red-500 font-semibold">매운맛 성지</span>
@@ -509,14 +535,14 @@
           </div>
         </div>
 
-        <!-- 4. 빈해원 -->
+        <!-- 5. 빈해원 -->
         <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
           <div class="flex justify-between items-start">
             <div>
-              <span class="text-[11px] font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded">4. 등록문화재 중식</span>
+              <span class="text-[11px] font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded">등록문화재 / 영화촬영지</span>
               <h3 class="font-bold text-base text-slate-800 mt-1">빈해원</h3>
             </div>
-            <span class="text-xs text-indigo-500 font-semibold">영화 《타짜》 촬영지</span>
+            <span class="text-xs text-indigo-500 font-semibold">이색 목조건물</span>
           </div>
           <p class="text-xs text-slate-600 mt-1.5"><strong>시그니처:</strong> 군산삼선물짜장, 탕수육, 군만두</p>
           <div class="mt-2 bg-slate-50 rounded-lg p-2 text-xs text-slate-600">💡 중국 영화 세트장 같은 웅장한 복층 목조 건물 내부 포토 스팟!</div>
@@ -526,16 +552,16 @@
           </div>
         </div>
 
-        <!-- 5. 복성루 -->
+        <!-- 6. 복성루 -->
         <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
           <div class="flex justify-between items-start">
             <div>
-              <span class="text-[11px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded">5. 군산 5대 짬뽕</span>
+              <span class="text-[11px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded">군산 5대 짬뽕</span>
               <h3 class="font-bold text-base text-slate-800 mt-1">복성루</h3>
             </div>
             <span class="text-xs text-slate-400">전국 짬뽕 성지</span>
           </div>
-          <p class="text-xs text-slate-600 mt-1.5"><strong>시그니처:</strong> 해물 고기짬뽕, 계란후라이 볶음밥</p>
+          <p class="text-xs text-slate-600 mt-1.5"><strong>시그니처:</strong> 해물 고기짬뽕, 계란후라이 볶음밥, 물짜장</p>
           <div class="mt-2 bg-slate-50 rounded-lg p-2 text-xs text-slate-600">💡 돼지고기 고명과 바지락·꼬막이 산더미처럼 올라간 진한 국물의 짬뽕!</div>
           <div class="mt-3 flex gap-2">
             <a href="https://m.map.naver.com/search2/search.naver?query=군산복성루" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
@@ -543,11 +569,11 @@
           </div>
         </div>
 
-        <!-- 6. 순돌이곱창 -->
+        <!-- 7. 순돌이곱창 -->
         <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
           <div class="flex justify-between items-start">
             <div>
-              <span class="text-[11px] font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded">6. 연탄불향 노포</span>
+              <span class="text-[11px] font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded">연탄불향 노포</span>
               <h3 class="font-bold text-base text-slate-800 mt-1">순돌이곱창</h3>
             </div>
             <span class="text-xs text-purple-500 font-semibold">저녁 추천</span>
@@ -560,11 +586,11 @@
           </div>
         </div>
 
-        <!-- 7. 안젤라분식 -->
+        <!-- 8. 안젤라분식 -->
         <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
           <div class="flex justify-between items-start">
             <div>
-              <span class="text-[11px] font-bold text-orange-700 bg-orange-50 px-2 py-0.5 rounded">7. 영화시장 로컬분식</span>
+              <span class="text-[11px] font-bold text-orange-700 bg-orange-50 px-2 py-0.5 rounded">영화시장 로컬분식</span>
               <h3 class="font-bold text-base text-slate-800 mt-1">안젤라분식</h3>
             </div>
             <span class="text-xs text-slate-400">단짠 비빔잡채</span>
@@ -577,11 +603,11 @@
           </div>
         </div>
 
-        <!-- 8. 한주옥 -->
+        <!-- 9. 한주옥 -->
         <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
           <div class="flex justify-between items-start">
             <div>
-              <span class="text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">8. 푸짐한 게장 정식</span>
+              <span class="text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">푸짐한 게장 정식</span>
               <h3 class="font-bold text-base text-slate-800 mt-1">한주옥</h3>
             </div>
             <span class="text-xs text-blue-500 font-semibold">월명동 맛집</span>
@@ -594,11 +620,11 @@
           </div>
         </div>
 
-        <!-- 9. 일흥옥 -->
+        <!-- 10. 일흥옥 -->
         <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
           <div class="flex justify-between items-start">
             <div>
-              <span class="text-[11px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">9. 토렴식 콩나물국밥</span>
+              <span class="text-[11px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">토렴식 콩나물국밥</span>
               <h3 class="font-bold text-base text-slate-800 mt-1">일흥옥</h3>
             </div>
             <span class="text-xs text-slate-400">70년 노포</span>
@@ -611,11 +637,11 @@
           </div>
         </div>
 
-        <!-- 10. 만남스넥 -->
+        <!-- 11. 만남스넥 -->
         <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
           <div class="flex justify-between items-start">
             <div>
-              <span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">10. 현지인 원픽 분식</span>
+              <span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">현지인 원픽 분식</span>
               <h3 class="font-bold text-base text-slate-800 mt-1">만남스넥</h3>
             </div>
             <span class="text-xs text-emerald-600 font-semibold">초장 김밥</span>
@@ -821,6 +847,10 @@
           <ul class="text-xs text-slate-600 space-y-2 mt-3 leading-relaxed">
             <li class="flex items-start gap-2">
               <span class="text-teal-600 font-bold">•</span>
+              <span><strong>물짜장 제대로 즐기기:</strong> 춘장 대신 해물 육수와 전분으로 볶아낸 군산 대표 별미입니다. <strong>국제반점</strong>이 맛의 밸런스가 가장 훌륭하며, 탕수육과 함께 시키는 것을 강력 추천합니다.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-teal-600 font-bold">•</span>
               <span><strong>편한 신발 필수:</strong> 철길마을 자갈길과 원도심 골목 산책이 많으니 굽 높은 신발보다 운동화나 플랫 추천!</span>
             </li>
             <li class="flex items-start gap-2">
@@ -925,9 +955,10 @@
 
     function copySummary() {
       const summaryText = `[군산 당일치기 알짜 가이드]
-✨ 추천 동선: 철길마을 → 째보식당 → 초원사진관 & 히로쓰가옥 → 카페 틈(또는 군산과자조합) → 이성당 → 안젤라분식
-🍽️ 맛집 10선: 째보식당(모둠장), 한일옥(소고기뭇국), 지린성(고추짜장), 빈해원(물짜장), 복성루(짬뽕), 순돌이곱창, 안젤라분식, 한주옥(게장백반), 일흥옥, 만남스넥
-☕ 디저트/카페 10선: 군산과자조합(100년 적산가옥), 이성당, 카페 틈(정원/포토존), 미즈커피(다다미), 인투더그레이, 파라디소페르두또, 카페 라파르(오션뷰), 무녀2구 버스, 영국빵집, 카페 신민회`;
+✨ 추천 동선: 철길마을 → 국제반점(물짜장) or 째보식당 → 초원사진관 & 히로쓰가옥 → 카페 틈(또는 군산과자조합) → 이성당 → 안젤라분식
+🍜 물짜장 명소: 국제반점(물짜장 맛 원탑), 빈해원(문화재 목조건물 물짜장)
+🍽️ 맛집 11선: 국제반점, 째보식당(모둠장), 한일옥(소고기뭇국), 지린성(고추짜장), 빈해원, 복성루, 순돌이곱창, 안젤라분식, 한주옥, 일흥옥, 만남스넥
+☕ 디저트 10선: 군산과자조합(100년 적산가옥), 이성당, 카페 틈, 미즈커피, 인투더그레이, 파라디소페르두또, 라파르, 무녀2구 버스, 영국빵집, 신민회`;
 
       navigator.clipboard.writeText(summaryText).then(() => {
         showToast("동선 요약이 클립보드에 복사되었습니다!");
