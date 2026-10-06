@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>군산 당일치기 감성 여행 가이드</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo", "Segoe UI", Roboto, sans-serif;
+    }
+    .hide-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .hide-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen pb-14">
+
+  <!-- 모바일 최적화 컨테이너 -->
+  <div class="max-w-md mx-auto bg-white min-h-screen shadow-lg flex flex-col relative">
+
+    <!-- 상단 헤더 -->
+    <header class="bg-gradient-to-r from-teal-600 to-emerald-600 text-white p-5 pt-7 rounded-b-3xl shadow-md sticky top-0 z-30">
+      <div class="flex items-center justify-between">
+        <span class="px-2.5 py-0.5 text-xs font-semibold bg-white/20 rounded-full tracking-wide">군산 당일치기 가이드</span>
+        <button onclick="copySummary()" class="text-xs bg-white/20 active:bg-white/30 px-3 py-1 rounded-full flex items-center gap-1 transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path></svg>
+          요약 복사
+        </button>
+      </div>
+      <h1 class="text-2xl font-black mt-2 tracking-tight">군산 낭만 여행 🗺️</h1>
+      <p class="text-teal-100 text-xs mt-0.5">맛집 10선 & 디저트·카페 10선 총정리</p>
+
+      <!-- 메인 탭 내비게이션 -->
+      <nav class="flex gap-1.5 mt-4 bg-black/15 p-1 rounded-2xl">
+        <button onclick="switchMainTab('tab-courses')" id="btn-courses" class="main-tab-btn flex-1 py-2 text-xs font-bold rounded-xl text-center transition bg-white text-teal-700 shadow-sm">
+          🗺️ 동선
+        </button>
+        <button onclick="switchMainTab('tab-food')" id="btn-food" class="main-tab-btn flex-1 py-2 text-xs font-medium rounded-xl text-center transition text-teal-100 hover:text-white">
+          🍽️ 맛집10
+        </button>
+        <button onclick="switchMainTab('tab-cafe')" id="btn-cafe" class="main-tab-btn flex-1 py-2 text-xs font-medium rounded-xl text-center transition text-teal-100 hover:text-white">
+          ☕ 디저트10
+        </button>
+        <button onclick="switchMainTab('tab-tips')" id="btn-tips" class="main-tab-btn flex-1 py-2 text-xs font-medium rounded-xl text-center transition text-teal-100 hover:text-white">
+          💡 꿀팁
+        </button>
+      </nav>
+    </header>
+
+    <!-- 메인 컨텐츠 영역 -->
+    <main class="p-4 flex-1">
+
+      <!-- ==================== 1. 추천동선 탭 ==================== -->
+      <section id="tab-courses" class="main-tab-content block space-y-4">
+        
+        <!-- 코스 선택 세그먼트 버튼 -->
+        <div class="flex gap-2 bg-slate-100 p-1.5 rounded-xl text-xs font-semibold">
+          <button onclick="switchSubCourse('course1')" id="sub-btn-course1" class="sub-course-btn flex-1 py-2 rounded-lg bg-teal-600 text-white shadow-sm transition">
+            📸 감성·인생샷
+          </button>
+          <button onclick="switchSubCourse('course2')" id="sub-btn-course2" class="sub-course-btn flex-1 py-2 rounded-lg text-slate-600 hover:bg-slate-200 transition">
+            🍜 빵·미식투어
+          </button>
+          <button onclick="switchSubCourse('course3')" id="sub-btn-course3" class="sub-course-btn flex-1 py-2 rounded-lg text-slate-600 hover:bg-slate-200 transition">
+            🚗 바다·드라이브
+          </button>
+        </div>
+
+        <!-- 코스 1: 감성 & 인생샷 -->
+        <div id="course1" class="sub-course-content block space-y-3">
+          <div class="bg-teal-50 border border-teal-200 rounded-2xl p-3.5">
+            <span class="text-xs font-bold text-teal-900">✨ 코스 1: 뚜벅이 & 감성 스냅 동선</span>
+            <p class="text-[11px] text-teal-700 mt-1 leading-snug">
+              원도심 도보 및 기본요금 택시로 해결! 사진 찍기 좋아하고 걷기 편한 최적의 코스.
+            </p>
+          </div>
+
+          <div class="relative pl-5 border-l-2 border-teal-200 space-y-5 ml-2.5 my-3">
+            
+            <!-- 10:30 철길마을 -->
+            <div class="relative">
+              <span class="absolute -left-[25px] top-1.5 w-3.5 h-3.5 rounded-full bg-teal-500 border-2 border-white shadow"></span>
+              <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-sm">
+                <div class="flex justify-between items-center">
+                  <span class="text-xs font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded">10:30 AM</span>
+                  <span class="text-[11px] text-slate-500">레트로 기찻길</span>
+                </div>
+                <h4 class="font-bold text-sm text-slate-800 mt-1.5">경암동 철길마을</h4>
+                <p class="text-xs text-slate-600 mt-1">옛 기찻길 상점가, 추억의 과자 & 달고나 굽기 체험</p>
+                <div class="mt-2 bg-amber-50 text-amber-900 border border-amber-200 rounded-lg p-2 text-xs">
+                  📸 <strong>포토 팁:</strong> 사람이 덜 붐비는 오전 첫 타임에 기찻길 전신 스냅 남기기!
+                </div>
+                <div class="mt-2.5 flex gap-2">
+                  <a href="https://m.map.naver.com/search2/search.naver?query=경암동철길마을" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
+                  <a href="https://map.kakao.com/link/search/경암동철길마을" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-yellow-50 text-yellow-800 font-semibold rounded-lg border border-yellow-200">카카오맵</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="text-[11px] text-slate-500 flex items-center gap-1.5 bg-slate-50 py-1 px-3 rounded-lg border border-dashed border-slate-200">
+              🚕 <span>철길마을 → 원도심: 택시 약 7분</span>
+            </div>
+
+            <!-- 12:00 점심 -->
+            <div class="relative">
+              <span class="absolute -left-[25px] top-1.5 w-3.5 h-3.5 rounded-full bg-teal-500 border-2 border-white shadow"></span>
+              <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-sm">
+                <div class="flex justify-between items-center">
+                  <span class="text-xs font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded">12:00 PM</span>
+                  <span class="text-[11px] text-red-500 font-semibold">점심 식사</span>
+                </div>
+                <h4 class="font-bold text-sm text-slate-800 mt-1.5">째보식당 or 한일옥</h4>
+                <p class="text-xs text-slate-600 mt-1">정갈하고 안 짠 모둠 해물장 정식 or 깊고 맑은 한우 소고기뭇국</p>
+                
+                <div class="mt-2.5 space-y-1.5 pt-1 border-t border-slate-100">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-medium text-slate-700">째보식당 (해물장):</span>
+                    <div class="flex gap-1.5">
+                      <a href="https://m.map.naver.com/search2/search.naver?query=군산째보식당" target="_blank" class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-md border border-emerald-200">네이버</a>
+                      <a href="https://map.kakao.com/link/search/군산째보식당" target="_blank" class="px-2.5 py-1 bg-yellow-50 text-yellow-800 font-semibold rounded-md border border-yellow-200">카카오</a>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-medium text-slate-700">한일옥 (소고기뭇국):</span>
+                    <div class="flex gap-1.5">
+                      <a href="https://m.map.naver.com/search2/search.naver?query=군산한일옥" target="_blank" class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-md border border-emerald-200">네이버</a>
+                      <a href="https://map.kakao.com/link/search/군산한일옥" target="_blank" class="px-2.5 py-1 bg-yellow-50 text-yellow-800 font-semibold rounded-md border border-yellow-200">카카오</a>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- 13:30 시간여행마을 -->
+            <div class="relative">
+              <span class="absolute -left-[25px] top-1.5 w-3.5 h-3.5 rounded-full bg-teal-500 border-2 border-white shadow"></span>
+              <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-sm">
+                <div class="flex justify-between items-center">
+                  <span class="text-xs font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded">01:30 PM</span>
+                  <span class="text-[11px] text-slate-500">도보 5분</span>
+                </div>
+                <h4 class="font-bold text-sm text-slate-800 mt-1.5">초원사진관 & 히로쓰가옥 & 말랭이마을</h4>
+                <p class="text-xs text-slate-600 mt-1">영화 촬영지 초록 티코 인증샷, 일본식 정원 가옥, 언덕 골목 벽화길</p>
+                <div class="mt-2 bg-teal-50 text-teal-900 border border-teal-200 rounded-lg p-2 text-xs">
+                  📸 <strong>포토 팁:</strong> 초원사진관 창가 앞과 히로쓰가옥 다다미 창살 정원 뷰가 메인!
+                </div>
+                
+                <div class="mt-2.5 space-y-1.5 pt-1 border-t border-slate-100">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-medium text-slate-700">초원사진관:</span>
+                    <div class="flex gap-1.5">
+                      <a href="https://m.map.naver.com/search2/search.naver?query=초원사진관" target="_blank" class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-md border border-emerald-200">네이버</a>
+                      <a href="https://map.kakao.com/link/search/초원사진관" target="_blank" class="px-2.5 py-1 bg-yellow-50 text-yellow-800 font-semibold rounded-md border border-yellow-200">카카오</a>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-medium text-slate-700">신흥동 일본식가옥:</span>
+                    <div class="flex gap-1.5">
+                      <a href="https://m.map.naver.com/search2/search.naver?query=신흥동일본식가옥" target="_blank" class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-md border border-emerald-200">네이버</a>
+                      <a href="https://map.kakao.com/link/search/신흥동일본식가옥" target="_blank" class="px-2.5 py-1 bg-yellow-50 text-yellow-800 font-semibold rounded-md border border-yellow-200">카카오</a>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-medium text-slate-700">말랭이마을:</span>
+                    <div class="flex gap-1.5">
+                      <a href="https://m.map.naver.com/search2/search.naver?query=군산말랭이마을" target="_blank" class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-md border border-emerald-200">네이버</a>
+                      <a href="https://map.kakao.com/link/search/군산말랭이마을" target="_blank" class="px-2.5 py-1 bg-yellow-50 text-yellow-800 font-semibold rounded-md border border-yellow-200">카카오</a>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- 15:00 감성 카페 -->
+            <div class="relative">
+              <span class="absolute -left-[25px] top-1.5 w-3.5 h-3.5 rounded-full bg-teal-500 border-2 border-white shadow"></span>
+              <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-sm">
+                <div class="flex justify-between items-center">
+                  <span class="text-xs font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded">03:00 PM</span>
+                  <span class="text-[11px] text-purple-600 font-semibold">감성 카페</span>
+                </div>
+                <h4 class="font-bold text-sm text-slate-800 mt-1.5">카페 틈 or 군산과자조합</h4>
+                <p class="text-xs text-slate-600 mt-1">담쟁이 넝쿨 붉은 벽돌 정원 카페 or 100년 적산가옥 앤틱 밀크티 명소</p>
+                
+                <div class="mt-2.5 space-y-1.5 pt-1 border-t border-slate-100">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-medium text-slate-700">카페 틈 (정원):</span>
+                    <div class="flex gap-1.5">
+                      <a href="https://m.map.naver.com/search2/search.naver?query=군산카페틈" target="_blank" class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-md border border-emerald-200">네이버</a>
+                      <a href="https://map.kakao.com/link/search/군산카페틈" target="_blank" class="px-2.5 py-1 bg-yellow-50 text-yellow-800 font-semibold rounded-md border border-yellow-200">카카오</a>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-medium text-slate-700">군산과자조합 (앤틱):</span>
+                    <div class="flex gap-1.5">
+                      <a href="https://m.map.naver.com/search2/search.naver?query=군산과자조합" target="_blank" class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-md border border-emerald-200">네이버</a>
+                      <a href="https://map.kakao.com/link/search/군산과자조합" target="_blank" class="px-2.5 py-1 bg-yellow-50 text-yellow-800 font-semibold rounded-md border border-yellow-200">카카오</a>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- 17:00 이성당 -->
+            <div class="relative">
+              <span class="absolute -left-[25px] top-1.5 w-3.5 h-3.5 rounded-full bg-teal-500 border-2 border-white shadow"></span>
+              <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-sm">
+                <div class="flex justify-between items-center">
+                  <span class="text-xs font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded">05:00 PM</span>
+                  <span class="text-[11px] text-amber-700 font-semibold">빵지순례</span>
+                </div>
+                <h4 class="font-bold text-sm text-slate-800 mt-1.5">이성당 본관 & 신관</h4>
+                <p class="text-xs text-slate-600 mt-1">단팥빵·야채빵 구매 or 신관 2층 카페에서 디저트 휴식</p>
+                <div class="mt-2.5 flex gap-2">
+                  <a href="https://m.map.naver.com/search2/search.naver?query=군산이성당" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
+                  <a href="https://map.kakao.com/link/search/군산이성당" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-yellow-50 text-yellow-800 font-semibold rounded-lg border border-yellow-200">카카오맵</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- 18:30 저녁 -->
+            <div class="relative">
+              <span class="absolute -left-[25px] top-1.5 w-3.5 h-3.5 rounded-full bg-teal-500 border-2 border-white shadow"></span>
+              <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-sm">
+                <div class="flex justify-between items-center">
+                  <span class="text-xs font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded">06:30 PM</span>
+                  <span class="text-[11px] text-red-500 font-semibold">저녁 식사</span>
+                </div>
+                <h4 class="font-bold text-sm text-slate-800 mt-1.5">안젤라분식 or 일흥옥</h4>
+                <p class="text-xs text-slate-600 mt-1">로컬 당면잡채·떡볶이 or 시원한 토렴식 콩나물국밥</p>
+                
+                <div class="mt-2.5 space-y-1.5 pt-1 border-t border-slate-100">
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-medium text-slate-700">안젤라분식 (잡채):</span>
+                    <div class="flex gap-1.5">
+                      <a href="https://m.map.naver.com/search2/search.naver?query=군산안젤라분식" target="_blank" class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-md border border-emerald-200">네이버</a>
+                      <a href="https://map.kakao.com/link/search/군산안젤라분식" target="_blank" class="px-2.5 py-1 bg-yellow-50 text-yellow-800 font-semibold rounded-md border border-yellow-200">카카오</a>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between text-xs">
+                    <span class="font-medium text-slate-700">일흥옥 (콩나물국밥):</span>
+                    <div class="flex gap-1.5">
+                      <a href="https://m.map.naver.com/search2/search.naver?query=군산일흥옥" target="_blank" class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-md border border-emerald-200">네이버</a>
+                      <a href="https://map.kakao.com/link/search/군산일흥옥" target="_blank" class="px-2.5 py-1 bg-yellow-50 text-yellow-800 font-semibold rounded-md border border-yellow-200">카카오</a>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 코스 2: 미식 투어 -->
+        <div id="course2" class="sub-course-content hidden space-y-3">
+          <div class="bg-amber-50 border border-amber-200 rounded-2xl p-3.5">
+            <span class="text-xs font-bold text-amber-900">🍜 코스 2: 먹방 & 빵지순례 동선</span>
+            <p class="text-[11px] text-amber-700 mt-1 leading-snug">
+              군산 대표 매운맛 고추짜장/짬뽕, 갓 구운 빵, 100년 가옥 카페와 노포 연탄구이 코스.
+            </p>
+          </div>
+          
+          <div class="space-y-3">
+            
+            <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-sm">
+              <span class="text-xs font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded">11:00 AM 점심</span>
+              <h4 class="font-bold text-sm text-slate-800 mt-1">지린성 or 빈해원</h4>
+              <p class="text-xs text-slate-600 mt-0.5">화끈한 고추짜장 or 영화 타짜 촬영지 물짜장 & 탕수육</p>
+              
+              <div class="mt-2.5 space-y-1.5 pt-1 border-t border-slate-100">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-medium text-slate-700">지린성 (고추짜장):</span>
+                  <div class="flex gap-1.5">
+                    <a href="https://m.map.naver.com/search2/search.naver?query=군산지린성" target="_blank" class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-md border border-emerald-200">네이버</a>
+                    <a href="https://map.kakao.com/link/search/군산지린성" target="_blank" class="px-2.5 py-1 bg-yellow-50 text-yellow-800 font-semibold rounded-md border border-yellow-200">카카오</a>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-medium text-slate-700">빈해원 (물짜장):</span>
+                  <div class="flex gap-1.5">
+                    <a href="https://m.map.naver.com/search2/search.naver?query=군산빈해원" target="_blank" class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-md border border-emerald-200">네이버</a>
+                    <a href="https://map.kakao.com/link/search/군산빈해원" target="_blank" class="px-2.5 py-1 bg-yellow-50 text-yellow-800 font-semibold rounded-md border border-yellow-200">카카오</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-sm">
+              <span class="text-xs font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded">12:30 PM 쇼핑</span>
+              <h4 class="font-bold text-sm text-slate-800 mt-1">이성당 빵지순례</h4>
+              <p class="text-xs text-slate-600 mt-0.5">점심 직후 갓 구워져 나오는 단팥빵 & 야채빵 픽업</p>
+              <div class="mt-2.5 flex gap-2">
+                <a href="https://m.map.naver.com/search2/search.naver?query=군산이성당" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
+                <a href="https://map.kakao.com/link/search/군산이성당" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-yellow-50 text-yellow-800 font-semibold rounded-lg border border-yellow-200">카카오맵</a>
+              </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-sm">
+              <span class="text-xs font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded">02:00 PM 휴식</span>
+              <h4 class="font-bold text-sm text-slate-800 mt-1">군산과자조합 or 미즈커피</h4>
+              <p class="text-xs text-slate-600 mt-0.5">100년 적산가옥 앤틱 밀크티 & 구움과자 or 2층 다다미방에서 편안한 휴식</p>
+              
+              <div class="mt-2.5 space-y-1.5 pt-1 border-t border-slate-100">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-medium text-slate-700">군산과자조합 (앤틱):</span>
+                  <div class="flex gap-1.5">
+                    <a href="https://m.map.naver.com/search2/search.naver?query=군산과자조합" target="_blank" class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-md border border-emerald-200">네이버</a>
+                    <a href="https://map.kakao.com/link/search/군산과자조합" target="_blank" class="px-2.5 py-1 bg-yellow-50 text-yellow-800 font-semibold rounded-md border border-yellow-200">카카오</a>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-medium text-slate-700">미즈커피 (다다미):</span>
+                  <div class="flex gap-1.5">
+                    <a href="https://m.map.naver.com/search2/search.naver?query=군산미즈커피" target="_blank" class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-md border border-emerald-200">네이버</a>
+                    <a href="https://map.kakao.com/link/search/군산미즈커피" target="_blank" class="px-2.5 py-1 bg-yellow-50 text-yellow-800 font-semibold rounded-md border border-yellow-200">카카오</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-sm">
+              <span class="text-xs font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded">04:30 PM 산책</span>
+              <h4 class="font-bold text-sm text-slate-800 mt-1">철길마을 간식 & 초원사진관</h4>
+              <p class="text-xs text-slate-600 mt-0.5">소화시킬 겸 레트로 골목 산책과 사진 촬영</p>
+              
+              <div class="mt-2.5 space-y-1.5 pt-1 border-t border-slate-100">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-medium text-slate-700">경암동 철길마을:</span>
+                  <div class="flex gap-1.5">
+                    <a href="https://m.map.naver.com/search2/search.naver?query=경암동철길마을" target="_blank" class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-md border border-emerald-200">네이버</a>
+                    <a href="https://map.kakao.com/link/search/경암동철길마을" target="_blank" class="px-2.5 py-1 bg-yellow-50 text-yellow-800 font-semibold rounded-md border border-yellow-200">카카오</a>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-medium text-slate-700">초원사진관:</span>
+                  <div class="flex gap-1.5">
+                    <a href="https://m.map.naver.com/search2/search.naver?query=초원사진관" target="_blank" class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-md border border-emerald-200">네이버</a>
+                    <a href="https://map.kakao.com/link/search/초원사진관" target="_blank" class="px-2.5 py-1 bg-yellow-50 text-yellow-800 font-semibold rounded-md border border-yellow-200">카카오</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-sm">
+              <span class="text-xs font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded">06:00 PM 저녁</span>
+              <h4 class="font-bold text-sm text-slate-800 mt-1">순돌이곱창</h4>
+              <p class="text-xs text-slate-600 mt-0.5">연탄 불향 가득한 막창·갈비 볶음 + 푸짐한 서비스 김치찌개</p>
+              <div class="mt-2.5 flex gap-2">
+                <a href="https://m.map.naver.com/search2/search.naver?query=군산순돌이곱창" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
+                <a href="https://map.kakao.com/link/search/군산순돌이곱창" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-yellow-50 text-yellow-800 font-semibold rounded-lg border border-yellow-200">카카오맵</a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 코스 3: 오션뷰 드라이브 -->
+        <div id="course3" class="sub-course-content hidden space-y-3">
+          <div class="bg-sky-50 border border-sky-200 rounded-2xl p-3.5">
+            <span class="text-xs font-bold text-sky-900">🌊 코스 3: 바다 & 오션뷰 드라이브 (자차)</span>
+            <p class="text-[11px] text-sky-700 mt-1 leading-snug">
+              새만금 방조제를 시원하게 달려 선유도 바다와 은파호수 테라스를 만끽하는 코스.
+            </p>
+          </div>
+          
+          <div class="space-y-3">
+            
+            <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-sm">
+              <span class="text-xs font-bold text-sky-800 bg-sky-50 px-2 py-0.5 rounded">10:30 AM 원도심</span>
+              <h4 class="font-bold text-sm text-slate-800 mt-1">초원사진관 & 이성당 빵 픽업</h4>
+              <p class="text-xs text-slate-600 mt-0.5">드라이브 중 먹을 간식 빵 챙겨서 출발</p>
+              
+              <div class="mt-2.5 space-y-1.5 pt-1 border-t border-slate-100">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-medium text-slate-700">초원사진관:</span>
+                  <div class="flex gap-1.5">
+                    <a href="https://m.map.naver.com/search2/search.naver?query=초원사진관" target="_blank" class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-md border border-emerald-200">네이버</a>
+                    <a href="https://map.kakao.com/link/search/초원사진관" target="_blank" class="px-2.5 py-1 bg-yellow-50 text-yellow-800 font-semibold rounded-md border border-yellow-200">카카오</a>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-medium text-slate-700">이성당 본관:</span>
+                  <div class="flex gap-1.5">
+                    <a href="https://m.map.naver.com/search2/search.naver?query=군산이성당" target="_blank" class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-md border border-emerald-200">네이버</a>
+                    <a href="https://map.kakao.com/link/search/군산이성당" target="_blank" class="px-2.5 py-1 bg-yellow-50 text-yellow-800 font-semibold rounded-md border border-yellow-200">카카오</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-sm">
+              <span class="text-xs font-bold text-sky-800 bg-sky-50 px-2 py-0.5 rounded">11:30 AM 점심</span>
+              <h4 class="font-bold text-sm text-slate-800 mt-1">째보식당 (모둠장 정식)</h4>
+              <p class="text-xs text-slate-600 mt-0.5">깔끔하고 든든하게 점심 식사</p>
+              <div class="mt-2.5 flex gap-2">
+                <a href="https://m.map.naver.com/search2/search.naver?query=군산째보식당" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
+                <a href="https://map.kakao.com/link/search/군산째보식당" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-yellow-50 text-yellow-800 font-semibold rounded-lg border border-yellow-200">카카오맵</a>
+              </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-sm">
+              <span class="text-xs font-bold text-sky-800 bg-sky-50 px-2 py-0.5 rounded">02:00 PM 고군산군도</span>
+              <h4 class="font-bold text-sm text-slate-800 mt-1">무녀2구 마을버스 & 옥돌해수욕장</h4>
+              <p class="text-xs text-slate-600 mt-0.5">바다 앞 노란 스쿨버스 카페와 해안 나무 데크길 산책</p>
+              
+              <div class="mt-2.5 space-y-1.5 pt-1 border-t border-slate-100">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-medium text-slate-700">무녀2구 마을버스:</span>
+                  <div class="flex gap-1.5">
+                    <a href="https://m.map.naver.com/search2/search.naver?query=무녀2구마을버스" target="_blank" class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-md border border-emerald-200">네이버</a>
+                    <a href="https://map.kakao.com/link/search/무녀2구마을버스" target="_blank" class="px-2.5 py-1 bg-yellow-50 text-yellow-800 font-semibold rounded-md border border-yellow-200">카카오</a>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between text-xs">
+                  <span class="font-medium text-slate-700">옥돌해수욕장 데크길:</span>
+                  <div class="flex gap-1.5">
+                    <a href="https://m.map.naver.com/search2/search.naver?query=선유도옥돌해수욕장" target="_blank" class="px-2.5 py-1 bg-emerald-50 text-emerald-700 font-semibold rounded-md border border-emerald-200">네이버</a>
+                    <a href="https://map.kakao.com/link/search/옥돌해변" target="_blank" class="px-2.5 py-1 bg-yellow-50 text-yellow-800 font-semibold rounded-md border border-yellow-200">카카오</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-sm">
+              <span class="text-xs font-bold text-sky-800 bg-sky-50 px-2 py-0.5 rounded">06:00 PM 호수 디너</span>
+              <h4 class="font-bold text-sm text-slate-800 mt-1">은파호수공원 [파라디소 페르두또]</h4>
+              <p class="text-xs text-slate-600 mt-0.5">물빛다리 야경과 호수 테라스 화덕피자 & 파스타</p>
+              <div class="mt-2.5 flex gap-2">
+                <a href="https://m.map.naver.com/search2/search.naver?query=파라디소페르두또" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
+                <a href="https://map.kakao.com/link/search/파라디소페르두또" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-yellow-50 text-yellow-800 font-semibold rounded-lg border border-yellow-200">카카오맵</a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ==================== 2. 맛집 모음 탭 (10선) ==================== -->
+      <section id="tab-food" class="main-tab-content hidden space-y-3.5">
+        <div class="bg-rose-50 border border-rose-200 rounded-2xl p-3.5">
+          <span class="text-xs font-bold text-rose-900">🍽️ 군산 찐맛집 베스트 10선</span>
+          <p class="text-[11px] text-rose-700 mt-1 leading-snug">
+            정갈한 해물장부터 명물 중식, 노포 연탄구이, 로컬 분식까지 엄선했습니다.
+          </p>
+        </div>
+
+        <!-- 1. 째보식당 -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[11px] font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded">1. 정갈한 해물장</span>
+              <h3 class="font-bold text-base text-slate-800 mt-1">째보식당</h3>
+            </div>
+            <span class="text-xs text-rose-500 font-bold">★ 여심 1위</span>
+          </div>
+          <p class="text-xs text-slate-600 mt-1.5"><strong>시그니처:</strong> 째보세트 (간장게장, 전복장, 새우장, 연어장, 소라장) + 꽃게라면</p>
+          <div class="mt-2 bg-slate-50 rounded-lg p-2 text-xs text-slate-600">💡 김 위에 밥, 버터, 무순, 노른자와 해물장 살을 올려 비벼 먹기!</div>
+          <div class="mt-3 flex gap-2">
+            <a href="https://m.map.naver.com/search2/search.naver?query=군산째보식당" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
+            <a href="https://map.kakao.com/link/search/군산째보식당" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-yellow-50 text-yellow-800 font-semibold rounded-lg border border-yellow-200">카카오맵</a>
+          </div>
+        </div>
+
+        <!-- 2. 한일옥 -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[11px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded">2. 80년 전통 고택</span>
+              <h3 class="font-bold text-base text-slate-800 mt-1">한일옥</h3>
+            </div>
+            <span class="text-xs text-slate-400">초원사진관 앞</span>
+          </div>
+          <p class="text-xs text-slate-600 mt-1.5"><strong>시그니처:</strong> 무우국(소고기뭇국), 육회비빔밥 (평일 한정)</p>
+          <div class="mt-2 bg-slate-50 rounded-lg p-2 text-xs text-slate-600">💡 맑고 깊은 국물로 든든한 아침·점심 최적. 회전율이 빨라 대기가 금방 줄어듦.</div>
+          <div class="mt-3 flex gap-2">
+            <a href="https://m.map.naver.com/search2/search.naver?query=군산한일옥" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
+            <a href="https://map.kakao.com/link/search/군산한일옥" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-yellow-50 text-yellow-800 font-semibold rounded-lg border border-yellow-200">카카오맵</a>
+          </div>
+        </div>
+
+        <!-- 3. 지린성 -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[11px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded">3. 화끈한 불맛 중식</span>
+              <h3 class="font-bold text-base text-slate-800 mt-1">지린성</h3>
+            </div>
+            <span class="text-xs text-red-500 font-semibold">매운맛 성지</span>
+          </div>
+          <p class="text-xs text-slate-600 mt-1.5"><strong>시그니처:</strong> 고추짜장, 고추짬뽕</p>
+          <div class="mt-2 bg-slate-50 rounded-lg p-2 text-xs text-slate-600">💡 큼직한 돼지고기와 청양고추의 알싸한 맛! 맵찔이는 일반 짜장과 섞기 필수.</div>
+          <div class="mt-3 flex gap-2">
+            <a href="https://m.map.naver.com/search2/search.naver?query=군산지린성" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
+            <a href="https://map.kakao.com/link/search/군산지린성" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-yellow-50 text-yellow-800 font-semibold rounded-lg border border-yellow-200">카카오맵</a>
+          </div>
+        </div>
+
+        <!-- 4. 빈해원 -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[11px] font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded">4. 등록문화재 중식</span>
+              <h3 class="font-bold text-base text-slate-800 mt-1">빈해원</h3>
+            </div>
+            <span class="text-xs text-indigo-500 font-semibold">영화 《타짜》 촬영지</span>
+          </div>
+          <p class="text-xs text-slate-600 mt-1.5"><strong>시그니처:</strong> 군산삼선물짜장, 탕수육, 군만두</p>
+          <div class="mt-2 bg-slate-50 rounded-lg p-2 text-xs text-slate-600">💡 중국 영화 세트장 같은 웅장한 복층 목조 건물 내부 포토 스팟!</div>
+          <div class="mt-3 flex gap-2">
+            <a href="https://m.map.naver.com/search2/search.naver?query=군산빈해원" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
+            <a href="https://map.kakao.com/link/search/군산빈해원" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-yellow-50 text-yellow-800 font-semibold rounded-lg border border-yellow-200">카카오맵</a>
+          </div>
+        </div>
+
+        <!-- 5. 복성루 -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[11px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded">5. 군산 5대 짬뽕</span>
+              <h3 class="font-bold text-base text-slate-800 mt-1">복성루</h3>
+            </div>
+            <span class="text-xs text-slate-400">전국 짬뽕 성지</span>
+          </div>
+          <p class="text-xs text-slate-600 mt-1.5"><strong>시그니처:</strong> 해물 고기짬뽕, 계란후라이 볶음밥</p>
+          <div class="mt-2 bg-slate-50 rounded-lg p-2 text-xs text-slate-600">💡 돼지고기 고명과 바지락·꼬막이 산더미처럼 올라간 진한 국물의 짬뽕!</div>
+          <div class="mt-3 flex gap-2">
+            <a href="https://m.map.naver.com/search2/search.naver?query=군산복성루" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
+            <a href="https://map.kakao.com/link/search/군산복성루" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-yellow-50 text-yellow-800 font-semibold rounded-lg border border-yellow-200">카카오맵</a>
+          </div>
+        </div>
+
+        <!-- 6. 순돌이곱창 -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[11px] font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded">6. 연탄불향 노포</span>
+              <h3 class="font-bold text-base text-slate-800 mt-1">순돌이곱창</h3>
+            </div>
+            <span class="text-xs text-purple-500 font-semibold">저녁 추천</span>
+          </div>
+          <p class="text-xs text-slate-600 mt-1.5"><strong>시그니처:</strong> 막창+목살+갈비 섞어 볶음</p>
+          <div class="mt-2 bg-slate-50 rounded-lg p-2 text-xs text-slate-600">💡 매콤한 불향에 기본 서비스로 부침개와 푸짐한 김치찌개가 나오는 찐맛집!</div>
+          <div class="mt-3 flex gap-2">
+            <a href="https://m.map.naver.com/search2/search.naver?query=군산순돌이곱창" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
+            <a href="https://map.kakao.com/link/search/군산순돌이곱창" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-yellow-50 text-yellow-800 font-semibold rounded-lg border border-yellow-200">카카오맵</a>
+          </div>
+        </div>
+
+        <!-- 7. 안젤라분식 -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[11px] font-bold text-orange-700 bg-orange-50 px-2 py-0.5 rounded">7. 영화시장 로컬분식</span>
+              <h3 class="font-bold text-base text-slate-800 mt-1">안젤라분식</h3>
+            </div>
+            <span class="text-xs text-slate-400">단짠 비빔잡채</span>
+          </div>
+          <p class="text-xs text-slate-600 mt-1.5"><strong>시그니처:</strong> 비빔잡채, 떡볶이, 김밥, 어묵 세트</p>
+          <div class="mt-2 bg-slate-50 rounded-lg p-2 text-xs text-slate-600">💡 백종원의 3대천왕 출연. 참기름과 깨소금 가득한 단짠 당면잡채 별미!</div>
+          <div class="mt-3 flex gap-2">
+            <a href="https://m.map.naver.com/search2/search.naver?query=군산안젤라분식" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
+            <a href="https://map.kakao.com/link/search/군산안젤라분식" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-yellow-50 text-yellow-800 font-semibold rounded-lg border border-yellow-200">카카오맵</a>
+          </div>
+        </div>
+
+        <!-- 8. 한주옥 -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">8. 푸짐한 게장 정식</span>
+              <h3 class="font-bold text-base text-slate-800 mt-1">한주옥</h3>
+            </div>
+            <span class="text-xs text-blue-500 font-semibold">월명동 맛집</span>
+          </div>
+          <p class="text-xs text-slate-600 mt-1.5"><strong>시그니처:</strong> 꽃게장 백반 정식 (간장게장, 양념게장, 생선회, 아구찜, 생선구이, 솥밥)</p>
+          <div class="mt-2 bg-slate-50 rounded-lg p-2 text-xs text-slate-600">💡 게장을 시키면 생선회와 아구찜까지 한상 가득 차려지는 남도식 가성비 백반!</div>
+          <div class="mt-3 flex gap-2">
+            <a href="https://m.map.naver.com/search2/search.naver?query=군산한주옥" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
+            <a href="https://map.kakao.com/link/search/군산한주옥" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-yellow-50 text-yellow-800 font-semibold rounded-lg border border-yellow-200">카카오맵</a>
+          </div>
+        </div>
+
+        <!-- 9. 일흥옥 -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[11px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">9. 토렴식 콩나물국밥</span>
+              <h3 class="font-bold text-base text-slate-800 mt-1">일흥옥</h3>
+            </div>
+            <span class="text-xs text-slate-400">70년 노포</span>
+          </div>
+          <p class="text-xs text-slate-600 mt-1.5"><strong>시그니처:</strong> 콩나물국밥, 모주</p>
+          <div class="mt-2 bg-slate-50 rounded-lg p-2 text-xs text-slate-600">💡 맑고 시원한 육수에 고춧가루와 계란을 띄운 군산 스타일 토렴 국밥!</div>
+          <div class="mt-3 flex gap-2">
+            <a href="https://m.map.naver.com/search2/search.naver?query=군산일흥옥" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
+            <a href="https://map.kakao.com/link/search/군산일흥옥" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-yellow-50 text-yellow-800 font-semibold rounded-lg border border-yellow-200">카카오맵</a>
+          </div>
+        </div>
+
+        <!-- 10. 만남스넥 -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">10. 현지인 원픽 분식</span>
+              <h3 class="font-bold text-base text-slate-800 mt-1">만남스넥</h3>
+            </div>
+            <span class="text-xs text-emerald-600 font-semibold">초장 김밥</span>
+          </div>
+          <p class="text-xs text-slate-600 mt-1.5"><strong>시그니처:</strong> 깻잎 잡채볶음, 김밥 (초장에 찍어 먹음), 순대볶음</p>
+          <div class="mt-2 bg-slate-50 rounded-lg p-2 text-xs text-slate-600">💡 군산만의 독특한 문화인 '김밥을 초장에 찍어먹는' 이색 꿀맛 로컬 분식집!</div>
+          <div class="mt-3 flex gap-2">
+            <a href="https://m.map.naver.com/search2/search.naver?query=군산만남스넥" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
+            <a href="https://map.kakao.com/link/search/군산만남스넥" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-yellow-50 text-yellow-800 font-semibold rounded-lg border border-yellow-200">카카오맵</a>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ==================== 3. 디저트·카페 탭 (10선) ==================== -->
+      <section id="tab-cafe" class="main-tab-content hidden space-y-3.5">
+        <div class="bg-amber-50 border border-amber-200 rounded-2xl p-3.5">
+          <span class="text-xs font-bold text-amber-900">☕ 빵지순례 & 감성 카페 베스트 10선</span>
+          <p class="text-[11px] text-amber-700 mt-1 leading-snug">
+            100년 적산가옥 앤틱 카페부터 다다미방, 호수 테라스, 오션뷰 명소까지 모았습니다.
+          </p>
+        </div>
+
+        <!-- 1. 군산과자조합 -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[11px] font-bold text-amber-900 bg-amber-100 px-2 py-0.5 rounded">1. 100년 적산가옥 앤틱</span>
+              <h3 class="font-bold text-base text-slate-800 mt-1">군산과자조합</h3>
+            </div>
+            <span class="text-xs text-amber-600 font-bold">인기 1위</span>
+          </div>
+          <p class="text-xs text-slate-600 mt-1.5"><strong>대표 메뉴:</strong> 1939 스페셜 밀크티, 수제 스콘 세트, 에그타르트, 말차라떼</p>
+          <div class="mt-2 bg-amber-50 rounded-lg p-2 text-xs text-amber-900">📸 100년 된 일본식 목조건물 2층의 고풍스러운 앤틱 가구와 햇살 드는 창가석 인생샷!</div>
+          <div class="mt-3 flex gap-2">
+            <a href="https://m.map.naver.com/search2/search.naver?query=군산과자조합" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
+            <a href="https://map.kakao.com/link/search/군산과자조합" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-yellow-50 text-yellow-800 font-semibold rounded-lg border border-yellow-200">카카오맵</a>
+          </div>
+        </div>
+
+        <!-- 2. 이성당 -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[11px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded">2. 대한민국 최고 빵집</span>
+              <h3 class="font-bold text-base text-slate-800 mt-1">이성당 (본관 & 신관)</h3>
+            </div>
+            <span class="text-xs text-amber-600 font-bold">필수 코스</span>
+          </div>
+          <p class="text-xs text-slate-600 mt-1.5"><strong>본관:</strong> 단팥빵, 야채빵 / <strong>신관:</strong> 쌀식빵, 조각케이크, 소금빵, 2층 브런치 카페</p>
+          <div class="mt-2 bg-amber-50 rounded-lg p-2 text-xs text-amber-900">💡 본관 줄이 길 땐 옆 핑크색 신관으로 들어가 트렌디한 빵과 카페를 즐기세요!</div>
+          <div class="mt-3 flex gap-2">
+            <a href="https://m.map.naver.com/search2/search.naver?query=군산이성당" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
+            <a href="https://map.kakao.com/link/search/군산이성당" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-yellow-50 text-yellow-800 font-semibold rounded-lg border border-yellow-200">카카오맵</a>
+          </div>
+        </div>
+
+        <!-- 3. 카페 틈 -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[11px] font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded">3. 감성 정원 카페</span>
+              <h3 class="font-bold text-base text-slate-800 mt-1">카페 틈 (TEUM)</h3>
+            </div>
+            <span class="text-xs text-teal-600 font-bold">인생샷 성지</span>
+          </div>
+          <p class="text-xs text-slate-600 mt-1.5"><strong>대표 메뉴:</strong> 틈 아인슈페너, 밤치즈케이크, 갸또 쇼콜라</p>
+          <div class="mt-2 bg-slate-50 rounded-lg p-2 text-xs text-slate-600">📸 붉은 벽돌과 담쟁이덩굴이 뒤덮인 입구 비밀통로 골목이 최고의 사진 스팟!</div>
+          <div class="mt-3 flex gap-2">
+            <a href="https://m.map.naver.com/search2/search.naver?query=군산카페틈" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
+            <a href="https://map.kakao.com/link/search/군산카페틈" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-yellow-50 text-yellow-800 font-semibold rounded-lg border border-yellow-200">카카오맵</a>
+          </div>
+        </div>
+
+        <!-- 4. 미즈커피 -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[11px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded">4. 1930년대 근대 가옥</span>
+              <h3 class="font-bold text-base text-slate-800 mt-1">미즈커피 (Miz Coffee)</h3>
+            </div>
+            <span class="text-xs text-emerald-600 font-bold">2층 다다미 힐링</span>
+          </div>
+          <p class="text-xs text-slate-600 mt-1.5"><strong>대표 메뉴:</strong> 미즈라떼, 바닐라빈 라떼, 수제 젤라또 아포가토</p>
+          <div class="mt-2 bg-emerald-50 rounded-lg p-2 text-xs text-emerald-900">🛋️ 2층 일본식 다다미방에서 신발 벗고 다리 뻗으며 쉴 수 있는 힐링 명소!</div>
+          <div class="mt-3 flex gap-2">
+            <a href="https://m.map.naver.com/search2/search.naver?query=군산미즈커피" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
+            <a href="https://map.kakao.com/link/search/군산미즈커피" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-yellow-50 text-yellow-800 font-semibold rounded-lg border border-yellow-200">카카오맵</a>
+          </div>
+        </div>
+
+        <!-- 5. 인투더그레이 -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[11px] font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">5. 리빙 소품샵 겸 카페</span>
+              <h3 class="font-bold text-base text-slate-800 mt-1">인투더그레이</h3>
+            </div>
+            <span class="text-xs text-purple-600 font-bold">여심 저격</span>
+          </div>
+          <p class="text-xs text-slate-600 mt-1.5"><strong>대표 메뉴:</strong> 촉촉한 프렌치토스트, 시그니처 크림라떼</p>
+          <div class="mt-2 bg-slate-50 rounded-lg p-2 text-xs text-slate-600">💡 감각적인 식기류, 컵, 패브릭 소품을 함께 판매해 구경하고 쇼핑하기 좋습니다.</div>
+          <div class="mt-3 flex gap-2">
+            <a href="https://m.map.naver.com/search2/search.naver?query=군산인투더그레이" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
+            <a href="https://map.kakao.com/link/search/군산인투더그레이" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-yellow-50 text-yellow-800 font-semibold rounded-lg border border-yellow-200">카카오맵</a>
+          </div>
+        </div>
+
+        <!-- 6. 파라디소 페르두또 -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[11px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded">6. 은파호수 뷰 테라스</span>
+              <h3 class="font-bold text-base text-slate-800 mt-1">파라디소 페르두또</h3>
+            </div>
+            <span class="text-xs text-blue-600 font-bold">분위기 끝판왕</span>
+          </div>
+          <p class="text-xs text-slate-600 mt-1.5"><strong>대표 메뉴:</strong> 화덕피자, 파스타, 수제 맥주 & 와인, 커피</p>
+          <div class="mt-2 bg-slate-50 rounded-lg p-2 text-xs text-slate-600">💡 은파호수 물빛다리 야경이 보이는 야외 숲속 테라스에서 즐기는 최고의 낭만!</div>
+          <div class="mt-3 flex gap-2">
+            <a href="https://m.map.naver.com/search2/search.naver?query=파라디소페르두또" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
+            <a href="https://map.kakao.com/link/search/파라디소페르두또" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-yellow-50 text-yellow-800 font-semibold rounded-lg border border-yellow-200">카카오맵</a>
+          </div>
+        </div>
+
+        <!-- 7. 카페 라파르 (La Phare) -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[11px] font-bold text-sky-800 bg-sky-50 px-2 py-0.5 rounded">7. 장자도 절벽 오션뷰</span>
+              <h3 class="font-bold text-base text-slate-800 mt-1">카페 라파르 (La Phare)</h3>
+            </div>
+            <span class="text-xs text-sky-600 font-bold">바다 뷰 성지</span>
+          </div>
+          <p class="text-xs text-slate-600 mt-1.5"><strong>대표 메뉴:</strong> 한라봉 크림라떼, 바다 파노라마 통창 전망</p>
+          <div class="mt-2 bg-sky-50 rounded-lg p-2 text-xs text-sky-900">🌊 장자도 절벽 위에 위치해 서해 바다와 섬들이 한눈에 펼쳐지는 환상적인 뷰!</div>
+          <div class="mt-3 flex gap-2">
+            <a href="https://m.map.naver.com/search2/search.naver?query=장자도카페라파르" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
+            <a href="https://map.kakao.com/link/search/장자도라파르" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-yellow-50 text-yellow-800 font-semibold rounded-lg border border-yellow-200">카카오맵</a>
+          </div>
+        </div>
+
+        <!-- 8. 무녀2구 마을버스 -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[11px] font-bold text-yellow-700 bg-yellow-50 px-2 py-0.5 rounded">8. 노란 스쿨버스 카페</span>
+              <h3 class="font-bold text-base text-slate-800 mt-1">무녀2구 마을버스</h3>
+            </div>
+            <span class="text-xs text-yellow-600 font-bold">선유도 이색카페</span>
+          </div>
+          <p class="text-xs text-slate-600 mt-1.5"><strong>대표 메뉴:</strong> 수제버거, 시원한 아메리카노</p>
+          <div class="mt-2 bg-slate-50 rounded-lg p-2 text-xs text-slate-600">🚌 바다 바로 앞 노란색 미국 스쿨버스 안에서 바다를 보며 힐링하는 이색 명소!</div>
+          <div class="mt-3 flex gap-2">
+            <a href="https://m.map.naver.com/search2/search.naver?query=무녀2구마을버스" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
+            <a href="https://map.kakao.com/link/search/무녀2구마을버스" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-yellow-50 text-yellow-800 font-semibold rounded-lg border border-yellow-200">카카오맵</a>
+          </div>
+        </div>
+
+        <!-- 9. 영국빵집 -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[11px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded">9. 현지인 보리빵 명가</span>
+              <h3 class="font-bold text-base text-slate-800 mt-1">영국빵집</h3>
+            </div>
+            <span class="text-xs text-slate-400">담백·고소</span>
+          </div>
+          <p class="text-xs text-slate-600 mt-1.5"><strong>대표 메뉴:</strong> 흰찰쌀보리 단팥빵, 보리 만주, 보리 카스테라</p>
+          <div class="mt-2 bg-slate-50 rounded-lg p-2 text-xs text-slate-600">💡 군산 흰찰쌀보리로 만들어 담백하고 속이 편한 현지인 원픽 베이커리!</div>
+          <div class="mt-3 flex gap-2">
+            <a href="https://m.map.naver.com/search2/search.naver?query=군산영국빵집" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
+            <a href="https://map.kakao.com/link/search/군산영국빵집" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-yellow-50 text-yellow-800 font-semibold rounded-lg border border-yellow-200">카카오맵</a>
+          </div>
+        </div>
+
+        <!-- 10. 카페 신민회 -->
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <div class="flex justify-between items-start">
+            <div>
+              <span class="text-[11px] font-bold text-red-700 bg-red-50 px-2 py-0.5 rounded">10. 개화기 레트로 감성</span>
+              <h3 class="font-bold text-base text-slate-800 mt-1">카페 신민회</h3>
+            </div>
+            <span class="text-xs text-red-500 font-semibold">태극기 쿠키</span>
+          </div>
+          <p class="text-xs text-slate-600 mt-1.5"><strong>대표 메뉴:</strong> 태극기 버터쿠키, 미숫가루 라떼, 크림브륄레</p>
+          <div class="mt-2 bg-slate-50 rounded-lg p-2 text-xs text-slate-600">📸 독립운동가 테마의 이색적이고 고풍스러운 개화기 감성 인테리어 포토존!</div>
+          <div class="mt-3 flex gap-2">
+            <a href="https://m.map.naver.com/search2/search.naver?query=군산카페신민회" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-emerald-50 text-emerald-700 font-semibold rounded-lg border border-emerald-200">네이버지도</a>
+            <a href="https://map.kakao.com/link/search/군산카페신민회" target="_blank" class="flex-1 py-1.5 text-center text-xs bg-yellow-50 text-yellow-800 font-semibold rounded-lg border border-yellow-200">카카오맵</a>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- ==================== 4. 꿀팁 & 체크리스트 탭 ==================== -->
+      <section id="tab-tips" class="main-tab-content hidden space-y-4">
+        
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <h2 class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
+            <span>🎁</span> 동생들에게 알려주면 좋은 꿀팁
+          </h2>
+          <ul class="text-xs text-slate-600 space-y-2 mt-3 leading-relaxed">
+            <li class="flex items-start gap-2">
+              <span class="text-teal-600 font-bold">•</span>
+              <span><strong>편한 신발 필수:</strong> 철길마을 자갈길과 원도심 골목 산책이 많으니 굽 높은 신발보다 운동화나 플랫 추천!</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-teal-600 font-bold">•</span>
+              <span><strong>이성당 줄 피하기:</strong> 단팥/야채빵만 줄이 깁니다. 케이크나 타르트, 다른 빵을 원하면 옆 건물 <strong>신관</strong>으로 바로 입장하세요.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-teal-600 font-bold">•</span>
+              <span><strong>지칠 때 쉬어가기 좋은 곳:</strong> 미즈커피 2층은 일본식 다다미방 구조라 신발 벗고 편안하게 쉴 수 있어 뚜벅이 여행에 최적입니다.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-teal-600 font-bold">•</span>
+              <span><strong>짐 보관 팁:</strong> 군산역, 버스터미널 물품보관함 또는 이성당 맞은편 관광안내소에 짐 보관 가능.</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+          <h2 class="font-bold text-slate-800 text-sm flex items-center gap-1.5 mb-3">
+            <span>✅</span> 필수 포토존 체크리스트
+          </h2>
+          <div class="space-y-2.5 text-xs text-slate-700">
+            <label class="flex items-center gap-2 p-2 rounded-lg bg-slate-50 cursor-pointer">
+              <input type="checkbox" class="w-4 h-4 accent-teal-600 rounded">
+              <span>초원사진관 앞 초록색 티코 옆에서 전신샷</span>
+            </label>
+            <label class="flex items-center gap-2 p-2 rounded-lg bg-slate-50 cursor-pointer">
+              <input type="checkbox" class="w-4 h-4 accent-teal-600 rounded">
+              <span>신흥동 히로쓰 가옥 다다미 창살 앞 정원 샷</span>
+            </label>
+            <label class="flex items-center gap-2 p-2 rounded-lg bg-slate-50 cursor-pointer">
+              <input type="checkbox" class="w-4 h-4 accent-teal-600 rounded">
+              <span>군산과자조합 100년 목조건물 앤틱 창가 석 샷</span>
+            </label>
+            <label class="flex items-center gap-2 p-2 rounded-lg bg-slate-50 cursor-pointer">
+              <input type="checkbox" class="w-4 h-4 accent-teal-600 rounded">
+              <span>철길마을 기찻길에서 달고나 들고 인증샷</span>
+            </label>
+            <label class="flex items-center gap-2 p-2 rounded-lg bg-slate-50 cursor-pointer">
+              <input type="checkbox" class="w-4 h-4 accent-teal-600 rounded">
+              <span>이성당 노란 쇼핑백 들고 매장 앞 인증샷</span>
+            </label>
+            <label class="flex items-center gap-2 p-2 rounded-lg bg-slate-50 cursor-pointer">
+              <input type="checkbox" class="w-4 h-4 accent-teal-600 rounded">
+              <span>카페 틈 붉은 벽돌 담쟁이덩굴 포토존</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-4 text-xs text-slate-600">
+          <div class="font-bold text-slate-800 mb-1">📞 군산 관광 안내 & 교통</div>
+          <p>군산관광안내소: 063-453-4986</p>
+          <p class="mt-1">군산 콜택시: 063-444-5555 / 카카오T 호출 매우 원활</p>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- 하단 토스트 알림창 -->
+    <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900/90 text-white text-xs px-4 py-2.5 rounded-full shadow-lg opacity-0 transition-opacity pointer-events-none z-50">
+      동선 요약이 클립보드에 복사되었습니다!
+    </div>
+
+  </div>
+
+  <script>
+    function switchMainTab(tabId) {
+      document.querySelectorAll('.main-tab-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById(tabId).classList.remove('hidden');
+
+      document.querySelectorAll('.main-tab-btn').forEach(btn => {
+        btn.className = "main-tab-btn flex-1 py-2 text-xs font-medium rounded-xl text-center transition text-teal-100 hover:text-white";
+      });
+
+      const activeBtnId = {
+        'tab-courses': 'btn-courses',
+        'tab-food': 'btn-food',
+        'tab-cafe': 'btn-cafe',
+        'tab-tips': 'btn-tips'
+      }[tabId];
+
+      const activeBtn = document.getElementById(activeBtnId);
+      if (activeBtn) {
+        activeBtn.className = "main-tab-btn flex-1 py-2 text-xs font-bold rounded-xl text-center transition bg-white text-teal-700 shadow-sm";
+      }
+    }
+
+    function switchSubCourse(courseId) {
+      document.querySelectorAll('.sub-course-content').forEach(el => el.classList.add('hidden'));
+      document.getElementById(courseId).classList.remove('hidden');
+
+      document.querySelectorAll('.sub-course-btn').forEach(btn => {
+        btn.className = "sub-course-btn flex-1 py-2 rounded-lg text-slate-600 hover:bg-slate-200 transition";
+      });
+
+      const activeSubBtn = document.getElementById('sub-btn-' + courseId);
+      if (activeSubBtn) {
+        activeSubBtn.className = "sub-course-btn flex-1 py-2 rounded-lg bg-teal-600 text-white shadow-sm transition";
+      }
+    }
+
+    function copySummary() {
+      const summaryText = `[군산 당일치기 알짜 가이드]
+✨ 추천 동선: 철길마을 → 째보식당 → 초원사진관 & 히로쓰가옥 → 카페 틈(또는 군산과자조합) → 이성당 → 안젤라분식
+🍽️ 맛집 10선: 째보식당(모둠장), 한일옥(소고기뭇국), 지린성(고추짜장), 빈해원(물짜장), 복성루(짬뽕), 순돌이곱창, 안젤라분식, 한주옥(게장백반), 일흥옥, 만남스넥
+☕ 디저트/카페 10선: 군산과자조합(100년 적산가옥), 이성당, 카페 틈(정원/포토존), 미즈커피(다다미), 인투더그레이, 파라디소페르두또, 카페 라파르(오션뷰), 무녀2구 버스, 영국빵집, 카페 신민회`;
+
+      navigator.clipboard.writeText(summaryText).then(() => {
+        showToast("동선 요약이 클립보드에 복사되었습니다!");
+      }).catch(() => {
+        showToast("복사 완료!");
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.innerText = msg;
+      toast.classList.remove('opacity-0');
+      setTimeout(() => {
+        toast.classList.add('opacity-0');
+      }, 2000);
+    }
+  </script>
+</body>
+</html>
